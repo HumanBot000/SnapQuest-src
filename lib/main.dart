@@ -7,6 +7,8 @@ void main() {
   runApp(const MyApp());
 }
 
+final logger = Logger();
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
