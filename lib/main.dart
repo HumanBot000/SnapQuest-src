@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appwrite_hackathon_2024/userAuth/auth_service.dart';
 import 'package:appwrite_hackathon_2024/userAuth/login_screen.dart';
-import 'dart:async';
+import 'package:logger/logger.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +22,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: Colors.blueAccent.shade400),
         useMaterial3: true,
       ),
       home: LoginScreen(authService: authService),
