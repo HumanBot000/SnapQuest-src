@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                widget.authService.loginWithGitHub();
+                widget.authService.loginWithGitHub(context);
               },
               child: const Text('Login mit GitHub'),
             ),

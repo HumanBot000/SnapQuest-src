@@ -2,8 +2,12 @@ import 'dart:developer';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/enums.dart';
 import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
-import 'package:appwrite/models.dart'
-    as models; // Import models to use User model
+import 'package:appwrite/models.dart' as models;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+
+import '../other/ExamplePage.dart'; // Import models to use User model
 
 class AuthService {
   final Client client = Client()
@@ -15,16 +19,25 @@ class AuthService {
     account = Account(client);
   }
 
-  Future<void> loginWithGitHub() async {
+  final logger = Logger();
+
+  Future<void> loginWithGitHub(BuildContext context) async {
     try {
-      await account.createOAuth2Session(
-        provider: OAuthProvider.github,
-        success:
-            'appwritehackathon://callback', // replace with your deep link URL
-        failure: 'appwritehackathon://error', // replace with your error URL
+      await account.createOAuth2Session(provider: OAuthProvider.github);
+      var user = await getUser();
+      if (user == null) {
+        logger.w("User not found after GitHub login");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Error during GitHub login! Please try again")));
+        return;
+      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => Example(user: user)),
       );
     } catch (e) {
-      log("Error on login (gh): $e", error: e);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Error during GitHub login! Please try again")));
+      logger.e("Error during GitHub login", e);
     }
   }
 
