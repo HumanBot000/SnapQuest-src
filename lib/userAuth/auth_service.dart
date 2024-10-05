@@ -2,7 +2,6 @@ import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/enums.dart';
 import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 import 'package:appwrite/models.dart' as models;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
 import '../other/ExamplePage.dart';
@@ -23,7 +22,7 @@ class AuthService {
       var user = await getUser();
       if (user == null) {
         logger.w("User not found after GitHub login");
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Error during GitHub login! Please try again")));
         return;
       }
@@ -31,7 +30,7 @@ class AuthService {
         MaterialPageRoute(builder: (context) => Example(user: user)),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Error during GitHub login! Please try again")));
       logger.e("Error during GitHub login", e);
     }
