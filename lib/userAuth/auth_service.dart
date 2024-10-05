@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import '../game/home.dart';
 import '../main.dart';
 
+final Client client = Client()
+    .setEndpoint('https://cloud.appwrite.io/v1')
+    .setProject('66fdb5920016d9270ac9');
+
 class AuthService {
-  final Client client = Client()
-      .setEndpoint('https://cloud.appwrite.io/v1')
-      .setProject('66fdb5920016d9270ac9');
   late Account account;
 
   AuthService() {

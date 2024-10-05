@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
