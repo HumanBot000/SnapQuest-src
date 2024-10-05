@@ -3,8 +3,8 @@ import 'package:appwrite/enums.dart';
 import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:flutter/material.dart';
+import '../game/home.dart';
 import '../main.dart';
-import '../other/ExamplePage.dart';
 
 class AuthService {
   final Client client = Client()
@@ -27,7 +27,7 @@ class AuthService {
         return;
       }
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => Example(user: user)),
+        MaterialPageRoute(builder: (context) => Home(user: user)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
