@@ -3,6 +3,8 @@ import 'package:appwrite_hackathon_2024/userAuth/auth_service.dart';
 import 'package:appwrite_hackathon_2024/userAuth/login_screen.dart';
 import 'package:logger/logger.dart';
 
+import 'game/home.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -18,6 +20,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthService authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +29,35 @@ class _MyAppState extends State<MyApp> {
             ColorScheme.fromSeed(seedColor: Colors.blueAccent.shade400),
         useMaterial3: true,
       ),
-      home: LoginScreen(authService: authService),
+      home: FutureBuilder<bool>(
+        future: authService.userIsLoggedIn(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (snapshot.data == true) {
+            return FutureBuilder(
+              future: authService.getUser(),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (userSnapshot.hasData) {
+                  return Home(user: userSnapshot.data!);
+                } else {
+                  return LoginScreen(authService: authService);
+                }
+              },
+            );
+          } else {
+            return LoginScreen(authService: authService);
+          }
+        },
+      ),
     );
   }
 }

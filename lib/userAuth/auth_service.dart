@@ -1,8 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/enums.dart';
-import 'package:appwrite_auth_kit/appwrite_auth_kit.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../game/home.dart';
 import '../main.dart';
 
@@ -16,6 +16,10 @@ class AuthService {
   AuthService() {
     account = Account(client);
   }
+  Future<bool> userIsLoggedIn() async {
+    models.User? user = await getUser();
+    return user != null;
+  }
 
   Future<void> loginWithGitHub(BuildContext context) async {
     try {
@@ -27,6 +31,7 @@ class AuthService {
             content: Text("Error during GitHub login! Please try again")));
         return;
       }
+      await _saveLoginStateLocally();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => Home(user: user)),
       );
@@ -38,19 +43,26 @@ class AuthService {
   }
 
   Future<models.User?> getUser() async {
-    try {
-      return await account.get();
-    } catch (e) {
-      logger.e("Error on fetching user: $e");
-      return null;
-    }
+    return await account.get();
   }
 
   Future<void> logout() async {
-    try {
-      await account.deleteSession(sessionId: 'current');
-    } catch (e) {
-      logger.e("Error on logout: $e");
-    }
+    await account.deleteSession(sessionId: 'current');
+    await _clearLoginStateLocally();
+  }
+
+  Future<void> _saveLoginStateLocally() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
+  }
+
+  Future<void> _clearLoginStateLocally() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('isLoggedIn');
+  }
+
+  Future<bool> getSavedLoginStateLocally() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
   }
 }
