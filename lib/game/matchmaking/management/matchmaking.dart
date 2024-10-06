@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import '../../../main.dart';
 import '../Widgets/WaitingForPlayers.dart';
@@ -37,21 +38,35 @@ Future<bool> _userIsInRoom(String userEmail) async {
   return response.total > 0;
 }
 
-Future<void> _addPlayerToRoom(
+Future<String> _addPlayerToRoom(
     int room, String userEmail, String userName) async {
+  final String _documentId = ID.unique();
   // Adds the current user to the first open room
   await databases.createDocument(
     databaseId: appDatabase,
     collectionId: matchmakingCollection,
-    documentId: ID.unique(),
+    documentId: _documentId,
     data: {'room_id': room, 'user_email': userEmail, "user_name": userName},
   );
+  return _documentId;
 }
 
-Future<void> startGame(
-    BuildContext context, String userEmail, String userName) async {
+Future<void> removePlayerFromRoom(
+    BuildContext context, String documentId) async {
+  // Removes the current user from the room
+  logger.i("Removed Player From Room $documentId");
+  await databases.deleteDocument(
+    databaseId: appDatabase,
+    collectionId: matchmakingCollection,
+    documentId: documentId,
+  );
+  logger.i("Removed Player From Room $documentId");
+  logger.d("Navigating Home");
+}
+
+Future<void> startGame(BuildContext context, User user) async {
   logger.d("Joining Room");
-  if (await _userIsInRoom(userEmail)) {
+  if (await _userIsInRoom(user.email)) {
     logger.i("User is already in a room");
     return;
   }
@@ -59,10 +74,12 @@ Future<void> startGame(
       .showSnackBar(const SnackBar(content: Text("Joining matchmaking")));
   int _currentRoom = await _getOpenMatchmakingRoom();
   logger.d("Open Room Found $_currentRoom");
-  await _addPlayerToRoom(_currentRoom, userEmail, userName);
+  String _documentId =
+      await _addPlayerToRoom(_currentRoom, user.email, user.name);
   Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => WaitRoom(playerNames: [userName]),
+        builder: (context) => WaitRoom(
+            playerNames: [user.name], user: user, documentId: _documentId),
       ));
 }

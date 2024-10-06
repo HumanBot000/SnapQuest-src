@@ -53,8 +53,7 @@ class _HomeState extends State<Home> {
                   backgroundColor: WidgetStateProperty.all(
                 Theme.of(context).colorScheme.primary,
               )),
-              onPressed: () => matchmaking.startGame(
-                  context, widget.user.email, widget.user.name),
+              onPressed: () => matchmaking.startGame(context, widget.user),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
