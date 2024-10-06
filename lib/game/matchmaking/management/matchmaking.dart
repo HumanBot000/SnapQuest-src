@@ -22,7 +22,7 @@ Future<int> _getOpenMatchmakingRoom() async {
       }
       return _currentCheckingRoom;
     } on AppwriteException {
-      return _currentCheckingRoom + 1;
+      return _currentCheckingRoom;
     }
   }
 }

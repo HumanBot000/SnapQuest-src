@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class WaitingDots extends StatefulWidget {
+  final List<double> _dyOffsets =
+      List.generate(3, (_) => math.Random().nextDouble());
   @override
   _WaitingDotsState createState() => _WaitingDotsState();
 }
@@ -9,9 +11,6 @@ class WaitingDots extends StatefulWidget {
 class _WaitingDotsState extends State<WaitingDots>
     with TickerProviderStateMixin {
   late List<AnimationController> _controllers;
-  final List<double> _dyOffsets =
-      List.generate(3, (_) => math.Random().nextDouble());
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +33,7 @@ class _WaitingDotsState extends State<WaitingDots>
             return Transform.translate(
               offset: Offset(
                 0,
-                (-10 + _dyOffsets[index]) *
+                (-10 + widget._dyOffsets[index]) *
                     (_controllers[index].value - (index * 0.2 * math.pi)).abs(),
               ),
               child: Text('.'),
