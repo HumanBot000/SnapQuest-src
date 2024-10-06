@@ -22,9 +22,8 @@ jobs:
         run: dart fix --apply
       - name: Commit and push changes
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add .
-          git commit -m "Applied Dart fixes"
+          git config --global user.name 'HumanBot000'
+          git config --global user.email 'HumanBot000@users.noreply.github.com'
+          git commit -am "Automated report"
           git push
         if: success()
