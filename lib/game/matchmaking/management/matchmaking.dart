@@ -17,7 +17,7 @@ Future<int> _getOpenMatchmakingRoom() async {
           Query.equal('room_id', _currentCheckingRoom),
         ],
       );
-      if (response.total >= 10) {
+      if (response.total >= maxPlayersPerRoom) {
         _currentCheckingRoom++;
         continue;
       }
@@ -64,6 +64,19 @@ Future<void> removePlayerFromRoom(
   logger.d("Navigating Home");
 }
 
+Future<List<String>> _getAllPlayersInRoom(int roomID) async {
+  final response = await databases.listDocuments(
+      databaseId: appDatabase,
+      collectionId: matchmakingCollection,
+      queries: [
+        Query.equal('room_id', roomID),
+      ]);
+  List<String> _allPlayersInRoom = response.documents
+      .map((document) => document.data['user_name'] as String)
+      .toList();
+  return _allPlayersInRoom;
+}
+
 Future<void> startGame(BuildContext context, User user) async {
   logger.d("Joining Room");
   if (await _userIsInRoom(user.email)) {
@@ -76,10 +89,15 @@ Future<void> startGame(BuildContext context, User user) async {
   logger.d("Open Room Found $_currentRoom");
   String _documentId =
       await _addPlayerToRoom(_currentRoom, user.email, user.name);
+  List<String> _allPlayersInRoom = await _getAllPlayersInRoom(_currentRoom);
   Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => WaitRoom(
-            playerNames: [user.name], user: user, documentId: _documentId),
+          playerNames: _allPlayersInRoom,
+          user: user,
+          documentId: _documentId,
+          roomID: _currentRoom,
+        ),
       ));
 }

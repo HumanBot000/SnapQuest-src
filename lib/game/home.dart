@@ -18,23 +18,50 @@ class _HomeState extends State<Home> {
   @override
   initState() {
     super.initState();
-    databases = Databases(client);
+    if (!_isDatabasesInitialized()) {
+      databases = Databases(client);
+    }
+  }
+
+  bool _isDatabasesInitialized() {
+    try {
+      databases;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Home",
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 24),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0), // Höhe der AppBar
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.inversePrimary
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
+          ),
+          child: AppBar(
+            title: Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Text(
+                  "Home",
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                )
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
         ),
       ),
       body: ListView(

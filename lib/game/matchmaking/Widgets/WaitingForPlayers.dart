@@ -1,7 +1,12 @@
+import 'dart:convert';
+
+import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:appwrite_hackathon_2024/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../animations/waiting.dart';
+import '../../../userAuth/auth_service.dart';
 import '../../home.dart';
 import '../config.dart';
 import '../management/matchmaking.dart';
@@ -11,39 +16,117 @@ class WaitRoom extends StatefulWidget {
       playerNames; //Don't save email because it's unnecessary (privacy)
   final User user;
   final String documentId;
+  final int roomID;
   const WaitRoom(
       {super.key,
       required this.playerNames,
       required this.user,
-      required this.documentId});
+      required this.documentId,
+      required this.roomID});
 
   @override
   State<WaitRoom> createState() => _WaitRoomState();
 }
 
 class _WaitRoomState extends State<WaitRoom> {
+  RealtimeSubscription? realtimeRoomMembersSubscription;
+  late List<String> playerNames;
+  @override
+  void initState() {
+    subscribeToRoomMemberUpdate();
+    playerNames = List.from(widget.playerNames);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    realtimeRoomMembersSubscription?.close();
+    super.dispose();
+  }
+
+  void subscribeToRoomMemberUpdate() {
+    final realtime = Realtime(client);
+
+    realtimeRoomMembersSubscription = realtime.subscribe(['documents']);
+
+    // listen to changes
+    realtimeRoomMembersSubscription!.stream.listen((data) {
+      final event = data.events.first;
+      final payload = data.payload;
+      List<String> _updatedPlayerNames = List.from(playerNames);
+      if (payload["room_id"] != widget.roomID) {
+        return;
+      }
+      if (event.endsWith("create")) {
+        logger.i("${payload["user_name"]} joined the room");
+        _updatedPlayerNames.add(payload["user_name"]);
+        setState(() {
+          playerNames = _updatedPlayerNames;
+        });
+      } else if (event.endsWith("delete")) {
+        if (payload["user_email"] == widget.user.email) {
+          logger.i(
+              "User got kicked out of Room ${payload["room_id"]} (🤫He could also have left, I have no way of knowing that 😅)");
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => Home(user: widget.user)));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                  "You got kicked out of the Matchmaking. To join a different room, try again.")));
+          return;
+        }
+        if (!_updatedPlayerNames.contains(payload["user_name"])) {
+          logger.wtf(
+              "${payload["user_name"]} left the room but somehow he wasn't even present in the clients memory?");
+          return;
+        }
+        logger.i("${payload["user_name"]} left the room");
+        _updatedPlayerNames.remove(payload["user_name"]);
+        setState(() {
+          playerNames = _updatedPlayerNames;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Text(
-                "Matchmaking - Wait for other Players",
-                softWrap: true,
-                overflow: TextOverflow.visible,
-              )
-            ],
-          )),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.inversePrimary
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            title: const Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Text(
+                  "Matchmaking - Wait for other Players",
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                )
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
                 itemCount: maxPlayersPerRoom,
                 itemBuilder: (context, index) {
-                  if (index <= widget.playerNames.length - 1) {
+                  if (index <= playerNames.length - 1) {
                     return Card(
                       elevation: 20,
                       child: Padding(
@@ -53,14 +136,14 @@ class _WaitRoomState extends State<WaitRoom> {
                             CircleAvatar(
                               backgroundColor: Colors.blue,
                               child: Text(
-                                widget.playerNames[index][0],
+                                playerNames[index][0].toUpperCase(),
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 20,
                             ),
-                            Text(widget.playerNames[index]),
+                            Text(playerNames[index]),
                           ],
                         ),
                       ),
@@ -78,13 +161,13 @@ class _WaitRoomState extends State<WaitRoom> {
                                         .toInt())
                                 .withOpacity(1.0),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                           ),
                           Row(
                             children: [
                               WaitingDots(),
-                              Text("Waiting for Player"),
+                              const Text("Waiting for Player"),
                               // Add the animated dots here
                             ],
                           )
