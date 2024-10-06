@@ -1,0 +1,30 @@
+name: Dart Format on Push
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  dart-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get
+      - name: Run dart format
+        run: |
+          echo "Running dart format..."
+          dart format . --output=none
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .
+          git commit -m "Applied Dart formatting" || echo "No changes to commit"
+          git push
+        if: success()
