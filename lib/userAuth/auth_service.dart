@@ -36,6 +36,26 @@ class AuthService {
     }
   }
 
+  Future<void> loginWithDiscord(BuildContext context) async {
+    try {
+      await account.createOAuth2Session(provider: OAuthProvider.discord);
+      var user = await getUser();
+      if (user == null) {
+        logger.w("User not found after Discord login");
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Error during Discord login! Please try again")));
+        return;
+      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => Home(user: user)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Error during Discord login! Please try again")));
+      logger.e("Error during Discord login", e);
+    }
+  }
+
   Future<models.User?> getUser() async {
     try {
       return await account.get();
