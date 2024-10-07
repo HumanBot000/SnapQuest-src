@@ -25,8 +25,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Colors.blueAccent.shade400),
+        colorScheme: const ColorScheme(
+          brightness: Brightness.dark,
+          primary: Color(0xFFfd366e),
+          onPrimary: Colors.white,
+          secondary: Color(0xFF00a5c2),
+          onSecondary: Colors.white,
+          error: Colors.red,
+          onError: Colors.white,
+          surface: Colors.black26,
+          onSurface: Colors.white,
+        ),
         useMaterial3: true,
       ),
       home: FutureBuilder<bool>(
