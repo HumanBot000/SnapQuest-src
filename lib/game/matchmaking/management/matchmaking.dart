@@ -54,7 +54,6 @@ Future<String> _addPlayerToRoom(
 Future<void> removePlayerFromRoom(
     BuildContext context, String documentId) async {
   // Removes the current user from the room
-  logger.i("Removed Player From Room $documentId");
   await databases.deleteDocument(
     databaseId: appDatabase,
     collectionId: matchmakingCollection,
