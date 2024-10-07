@@ -36,20 +36,21 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0), // Höhe der AppBar
+        preferredSize: const Size.fromHeight(60.0),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.inversePrimary
+                Theme.of(context).colorScheme.primaryContainer,
+                Theme.of(context).colorScheme.secondary
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
           child: AppBar(
-            title: Wrap(
+            title: const Wrap(
               alignment: WrapAlignment.center,
               children: [
                 Text(
@@ -66,33 +67,39 @@ class _HomeState extends State<Home> {
       ),
       body: ListView(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Welcome ${widget.user.name}",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Welcome ${widget.user.name}",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
           ),
-          ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                Theme.of(context).colorScheme.primary,
-              )),
-              onPressed: () => matchmaking.startGame(context, widget.user),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    "Start Game",
-                    style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                  Theme.of(context).colorScheme.primary,
+                )),
+                onPressed: () => matchmaking.startGame(context, widget.user),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "Start Game",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                    Icon(Icons.videogame_asset,
                         color: Theme.of(context).colorScheme.onPrimary),
-                  ),
-                  Icon(Icons.videogame_asset,
-                      color: Theme.of(context).colorScheme.onPrimary),
-                ],
-              ))
+                  ],
+                )),
+          )
         ],
       ),
     );

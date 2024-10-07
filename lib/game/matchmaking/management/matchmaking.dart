@@ -7,23 +7,23 @@ import '../config.dart';
 
 Future<int> _getOpenMatchmakingRoom() async {
   // Checks all open rooms and returns the first one that is not full
-  int _currentCheckingRoom = 1;
+  int currentCheckingRoom = 1;
   while (true) {
     try {
       final response = await databases.listDocuments(
         databaseId: appDatabase,
         collectionId: matchmakingCollection,
         queries: [
-          Query.equal('room_id', _currentCheckingRoom),
+          Query.equal('room_id', currentCheckingRoom),
         ],
       );
       if (response.total >= maxPlayersPerRoom) {
-        _currentCheckingRoom++;
+        currentCheckingRoom++;
         continue;
       }
-      return _currentCheckingRoom;
+      return currentCheckingRoom;
     } on AppwriteException {
-      return _currentCheckingRoom;
+      return currentCheckingRoom;
     }
   }
 }
@@ -40,15 +40,15 @@ Future<bool> _userIsInRoom(String userEmail) async {
 
 Future<String> _addPlayerToRoom(
     int room, String userEmail, String userName) async {
-  final String _documentId = ID.unique();
+  final String documentId = ID.unique();
   // Adds the current user to the first open room
   await databases.createDocument(
     databaseId: appDatabase,
     collectionId: matchmakingCollection,
-    documentId: _documentId,
+    documentId: documentId,
     data: {'room_id': room, 'user_email': userEmail, "user_name": userName},
   );
-  return _documentId;
+  return documentId;
 }
 
 Future<void> removePlayerFromRoom(
@@ -70,10 +70,10 @@ Future<List<String>> _getAllPlayersInRoom(int roomID) async {
       queries: [
         Query.equal('room_id', roomID),
       ]);
-  List<String> _allPlayersInRoom = response.documents
+  List<String> allPlayersInRoom = response.documents
       .map((document) => document.data['user_name'] as String)
       .toList();
-  return _allPlayersInRoom;
+  return allPlayersInRoom;
 }
 
 Future<void> startGame(BuildContext context, User user) async {
@@ -84,19 +84,19 @@ Future<void> startGame(BuildContext context, User user) async {
   }
   ScaffoldMessenger.of(context)
       .showSnackBar(const SnackBar(content: Text("Joining matchmaking")));
-  int _currentRoom = await _getOpenMatchmakingRoom();
-  logger.d("Open Room Found $_currentRoom");
-  String _documentId =
-      await _addPlayerToRoom(_currentRoom, user.email, user.name);
-  List<String> _allPlayersInRoom = await _getAllPlayersInRoom(_currentRoom);
+  int currentRoom = await _getOpenMatchmakingRoom();
+  logger.d("Open Room Found $currentRoom");
+  String documentId =
+      await _addPlayerToRoom(currentRoom, user.email, user.name);
+  List<String> allPlayersInRoom = await _getAllPlayersInRoom(currentRoom);
   Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => WaitRoom(
-          playerNames: _allPlayersInRoom,
+          playerNames: allPlayersInRoom,
           user: user,
-          documentId: _documentId,
-          roomID: _currentRoom,
+          documentId: documentId,
+          roomID: currentRoom,
         ),
       ));
 }

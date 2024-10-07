@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/main.dart';
@@ -53,15 +51,15 @@ class _WaitRoomState extends State<WaitRoom> {
     realtimeRoomMembersSubscription!.stream.listen((data) {
       final event = data.events.first;
       final payload = data.payload;
-      List<String> _updatedPlayerNames = List.from(playerNames);
+      List<String> updatedPlayerNames = List.from(playerNames);
       if (payload["room_id"] != widget.roomID) {
         return;
       }
       if (event.endsWith("create")) {
         logger.i("${payload["user_name"]} joined the room");
-        _updatedPlayerNames.add(payload["user_name"]);
+        updatedPlayerNames.add(payload["user_name"]);
         setState(() {
-          playerNames = _updatedPlayerNames;
+          playerNames = updatedPlayerNames;
         });
       } else if (event.endsWith("delete")) {
         if (payload["user_email"] == widget.user.email) {
@@ -74,15 +72,15 @@ class _WaitRoomState extends State<WaitRoom> {
                   "You got kicked out of the Matchmaking. To join a different room, try again.")));
           return;
         }
-        if (!_updatedPlayerNames.contains(payload["user_name"])) {
+        if (!updatedPlayerNames.contains(payload["user_name"])) {
           logger.wtf(
               "${payload["user_name"]} left the room but somehow he wasn't even present in the clients memory?");
           return;
         }
         logger.i("${payload["user_name"]} left the room");
-        _updatedPlayerNames.remove(payload["user_name"]);
+        updatedPlayerNames.remove(payload["user_name"]);
         setState(() {
-          playerNames = _updatedPlayerNames;
+          playerNames = updatedPlayerNames;
         });
       }
     });
@@ -92,13 +90,14 @@ class _WaitRoomState extends State<WaitRoom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60.0),
+        preferredSize: const Size.fromHeight(60.0),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.inversePrimary
+                Theme.of(context).colorScheme.primaryContainer,
+                Theme.of(context).colorScheme.secondary
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -137,7 +136,7 @@ class _WaitRoomState extends State<WaitRoom> {
                               backgroundColor: Colors.blue,
                               child: Text(
                                 playerNames[index][0].toUpperCase(),
-                                style: TextStyle(color: Colors.white),
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
                             const SizedBox(

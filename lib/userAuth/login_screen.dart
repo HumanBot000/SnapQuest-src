@@ -68,11 +68,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.discord, color: Color(0xFF7289d9)),
+                          child: const Icon(Icons.discord,
+                              color: Color(0xFF7289d9)),
                         ),
                         Container(
                           padding: const EdgeInsets.only(left: 16),

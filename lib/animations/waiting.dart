@@ -4,6 +4,8 @@ import 'dart:math' as math;
 class WaitingDots extends StatefulWidget {
   final List<double> _dyOffsets =
       List.generate(3, (_) => math.Random().nextDouble());
+
+  WaitingDots({super.key});
   @override
   _WaitingDotsState createState() => _WaitingDotsState();
 }
@@ -36,7 +38,7 @@ class _WaitingDotsState extends State<WaitingDots>
                 (-10 + widget._dyOffsets[index]) *
                     (_controllers[index].value - (index * 0.2 * math.pi)).abs(),
               ),
-              child: Text('.'),
+              child: const Text('.'),
             );
           },
         );
