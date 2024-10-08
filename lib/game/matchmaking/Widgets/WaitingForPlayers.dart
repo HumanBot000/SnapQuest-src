@@ -3,8 +3,9 @@ import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../animations/waiting.dart';
+import '../../../animations/Waiting.dart';
 import '../../../userAuth/auth_service.dart';
+import '../../challengeChooser/Widgets/ChallengeChooser.dart';
 import '../../home.dart';
 import '../config.dart';
 import '../management/matchmaking.dart';
@@ -176,6 +177,10 @@ class _WaitRoomState extends State<WaitRoom> {
                   );
                 }),
           ),
+          ElevatedButton(
+              onPressed: () => Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => ChallengeChooser())),
+              child: Text("Start Game (Debug)")),
           ElevatedButton(
               style: ButtonStyle(
                   backgroundColor:
