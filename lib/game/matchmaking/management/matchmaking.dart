@@ -18,8 +18,6 @@ Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
           Query.equal('room_id', currentCheckingRoom),
         ],
       );
-      print(
-          'Checking room $currentCheckingRoom: ${response.total} players found.');
       if (response.total >= maxPlayersPerRoom) {
         currentCheckingRoom++;
         continue;
