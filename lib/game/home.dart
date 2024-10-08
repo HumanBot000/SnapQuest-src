@@ -1,8 +1,8 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
+import '../enums/appwrite.dart';
 import '../userAuth/auth_service.dart';
-import 'matchmaking/config.dart';
 import './matchmaking/management/matchmaking.dart' as matchmaking;
 
 class Home extends StatefulWidget {
