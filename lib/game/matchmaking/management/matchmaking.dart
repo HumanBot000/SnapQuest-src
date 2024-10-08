@@ -6,9 +6,9 @@ import '../../../main.dart';
 import '../Widgets/WaitingForPlayers.dart';
 import '../config.dart';
 
-Future<int> _getOpenMatchmakingRoom() async {
-  // Checks all open rooms and returns the first one that is not full
+Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
   int currentCheckingRoom = 1;
+
   while (true) {
     try {
       final response = await databases.listDocuments(
@@ -18,15 +18,34 @@ Future<int> _getOpenMatchmakingRoom() async {
           Query.equal('room_id', currentCheckingRoom),
         ],
       );
+      print(
+          'Checking room $currentCheckingRoom: ${response.total} players found.');
       if (response.total >= maxPlayersPerRoom) {
         currentCheckingRoom++;
         continue;
       }
-      return currentCheckingRoom;
-    } on AppwriteException {
+      if (response.total == 0) {
+        return currentCheckingRoom;
+      }
+      if (await _roomIsOutdoor(currentCheckingRoom) == isOutdoor) {
+        return currentCheckingRoom;
+      }
+      currentCheckingRoom++;
+    } on AppwriteException catch (e) {
+      logger.e(e.message);
       return currentCheckingRoom;
     }
   }
+}
+
+Future<bool> _roomIsOutdoor(int roomID) async {
+  final response = await databases.listDocuments(
+      databaseId: appDatabase,
+      collectionId: matchmakingCollection,
+      queries: [
+        Query.equal('room_id', roomID),
+      ]);
+  return response.documents[0].data['is_outdoor'] as bool;
 }
 
 Future<bool> _userIsInRoom(String userEmail) async {
@@ -40,14 +59,19 @@ Future<bool> _userIsInRoom(String userEmail) async {
 }
 
 Future<String> _addPlayerToRoom(
-    int room, String userEmail, String userName) async {
+    int room, String userEmail, String userName, bool isOutdoor) async {
   final String documentId = ID.unique();
-  // Adds the current user to the first open room
+  // Adds the current user to the first open room with matching criteria
   await databases.createDocument(
     databaseId: appDatabase,
     collectionId: matchmakingCollection,
     documentId: documentId,
-    data: {'room_id': room, 'user_email': userEmail, "user_name": userName},
+    data: {
+      'room_id': room,
+      'user_email': userEmail,
+      "user_name": userName,
+      "is_outdoor": isOutdoor
+    },
   );
   return documentId;
 }
@@ -77,18 +101,19 @@ Future<List<String>> _getAllPlayersInRoom(int roomID) async {
   return allPlayersInRoom;
 }
 
-Future<void> startGame(BuildContext context, User user) async {
+Future<void> startGame(BuildContext context, User user,
+    {bool isOutdoor = true}) async {
   logger.d("Joining Room");
   if (await _userIsInRoom(user.email)) {
-    logger.i("User is already in a room");
+    logger.w("User is already in a room");
     return;
   }
   ScaffoldMessenger.of(context)
       .showSnackBar(const SnackBar(content: Text("Joining matchmaking")));
-  int currentRoom = await _getOpenMatchmakingRoom();
+  int currentRoom = await _getOpenMatchmakingRoom(isOutdoor: isOutdoor);
   logger.d("Open Room Found $currentRoom");
   String documentId =
-      await _addPlayerToRoom(currentRoom, user.email, user.name);
+      await _addPlayerToRoom(currentRoom, user.email, user.name, isOutdoor);
   List<String> allPlayersInRoom = await _getAllPlayersInRoom(currentRoom);
   Navigator.pushReplacement(
       context,

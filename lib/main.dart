@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
           onSecondary: Colors.white,
           error: Colors.red,
           onError: Colors.white,
-          surface: Colors.black26,
+          surface: Colors.black12,
           onSurface: Colors.white,
         ),
         useMaterial3: true,

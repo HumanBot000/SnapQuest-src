@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../enums/appwrite.dart';
 import '../userAuth/auth_service.dart';
 import './matchmaking/management/matchmaking.dart' as matchmaking;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   final User user;
@@ -15,12 +16,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late SharedPreferences prefs;
+  bool isOutdoor = true;
   @override
   initState() {
     super.initState();
     if (!_isDatabasesInitialized()) {
       databases = Databases(client);
     }
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isOutdoor = prefs.getBool('isOutdoor') ?? true;
+    });
   }
 
   bool _isDatabasesInitialized() {
@@ -30,6 +41,14 @@ class _HomeState extends State<Home> {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<void> _toggleOutdoor(bool value) async {
+    setState(() {
+      isOutdoor = value;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isOutdoor', value);
   }
 
   @override
@@ -86,7 +105,8 @@ class _HomeState extends State<Home> {
                     backgroundColor: WidgetStateProperty.all(
                   Theme.of(context).colorScheme.primary,
                 )),
-                onPressed: () => matchmaking.startGame(context, widget.user),
+                onPressed: () => matchmaking.startGame(context, widget.user,
+                    isOutdoor: isOutdoor),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -99,7 +119,52 @@ class _HomeState extends State<Home> {
                         color: Theme.of(context).colorScheme.onPrimary),
                   ],
                 )),
-          )
+          ),
+          Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Text("Are you currently Outside?"),
+                  Spacer(),
+                  Icon(
+                    Icons.kitchen,
+                    color: Colors.brown.shade400,
+                  ),
+                  AnimatedContainer(
+                    margin: const EdgeInsets.only(left: 10),
+                    duration: const Duration(milliseconds: 100),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isOutdoor
+                            ? [
+                                Theme.of(context).colorScheme.secondary,
+                                Colors.green,
+                              ]
+                            : [
+                                Theme.of(context).colorScheme.secondary,
+                                Colors.brown,
+                              ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Switch(
+                      value: isOutdoor,
+                      onChanged: (value) => _toggleOutdoor(value),
+                      activeColor: Theme.of(context).colorScheme.onPrimary,
+                      activeTrackColor: Colors.transparent,
+                      inactiveTrackColor: Colors.transparent,
+                      inactiveThumbColor:
+                          Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
+                  Icon(
+                    Icons.nature,
+                    color: Colors.green,
+                  ),
+                ],
+              ))
         ],
       ),
     );
