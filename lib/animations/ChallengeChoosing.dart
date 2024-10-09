@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class ChallengeDrawerAnimation extends StatefulWidget {
   final List<String> challenges;
@@ -27,8 +28,8 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
   int _currentIndex = 0;
   bool _isDrawing = true;
   int wordsShown = 0;
-  final Random _random = Random();
-
+  final Random random = Random();
+  final player = AudioPlayer();
   @override
   void initState() {
     super.initState();
@@ -41,6 +42,11 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
     _startDrawing();
+  }
+
+  Future<void> _playSoundEffect() async {
+    final player = AudioPlayer();
+    await player.play(AssetSource('src/audio/effects/wheel_of_fortune.mp3'));
   }
 
   void _startDrawing() {
@@ -57,7 +63,8 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
       if (_currentIndex < widget.challenges.length) {
         _controller.forward(from: 0);
       } else {
-        _currentIndex = _random.nextInt(widget.challenges.length);
+        await _playSoundEffect();
+        _currentIndex = random.nextInt(widget.challenges.length);
         _controller.forward(from: 0);
       }
       wordsShown++;

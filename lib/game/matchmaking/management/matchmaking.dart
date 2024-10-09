@@ -22,6 +22,7 @@ Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
         currentCheckingRoom++;
         continue;
       }
+      logger.w(response.total);
       if (response.total == 0) {
         return currentCheckingRoom;
       }
