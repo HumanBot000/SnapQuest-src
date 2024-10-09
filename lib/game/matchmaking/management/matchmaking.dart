@@ -75,15 +75,25 @@ Future<String> _addPlayerToRoom(
 }
 
 Future<void> removePlayerFromRoom(
-    BuildContext context, String documentId) async {
+    BuildContext context, String user_email) async {
   // Removes the current user from the room
+  final response = await databases.listDocuments(
+      databaseId: appDatabase,
+      collectionId: matchmakingCollection,
+      queries: [
+        Query.equal('user_email', user_email),
+      ]);
+  if (response.total == 0) {
+    logger.w("User is not in a room");
+    return;
+  }
+  final String documentID = response.documents[0].$id;
   await databases.deleteDocument(
     databaseId: appDatabase,
     collectionId: matchmakingCollection,
-    documentId: documentId,
+    documentId: documentID,
   );
-  logger.i("Removed Player From Room $documentId");
-  logger.d("Navigating Home");
+  logger.i("Removed Player From Room $documentID");
 }
 
 Future<List<String>> _getAllPlayersInRoom(int roomID) async {
@@ -104,7 +114,7 @@ Future<void> startGame(BuildContext context, User user,
   logger.d("Joining Room");
   if (await _userIsInRoom(user.email)) {
     logger.w("User is already in a room");
-    return;
+    removePlayerFromRoom(context, user.email);
   }
   ScaffoldMessenger.of(context)
       .showSnackBar(const SnackBar(content: Text("Joining matchmaking")));

@@ -187,6 +187,7 @@ class _WaitRoomState extends State<WaitRoom> {
                       WidgetStateProperty.all(Colors.red.shade300)),
               onPressed: () {
                 removePlayerFromRoom(context, widget.documentId);
+                logger.d("Navigating Home");
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
