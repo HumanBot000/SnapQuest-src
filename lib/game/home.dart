@@ -121,11 +121,11 @@ class _HomeState extends State<Home> {
                 )),
           ),
           Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Text("Are you currently Outside?"),
-                  Spacer(),
+                  const Text("Are you currently Outside?"),
+                  const Spacer(),
                   Icon(
                     Icons.kitchen,
                     color: Colors.brown.shade400,
@@ -159,7 +159,7 @@ class _HomeState extends State<Home> {
                           Theme.of(context).colorScheme.onSecondary,
                     ),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.nature,
                     color: Colors.green,
                   ),

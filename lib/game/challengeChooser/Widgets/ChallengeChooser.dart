@@ -1,29 +1,59 @@
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 
 import '../../../animations/ChallengeChoosing.dart';
+import '../../../classes/Challenge.dart';
+import '../../../main.dart';
+import 'management/setChallenge.dart';
 
 class ChallengeChooser extends StatefulWidget {
-  const ChallengeChooser({super.key});
+  final int roomID;
+  final User user;
+  final List<Challenge> challenges;
+
+  const ChallengeChooser(
+      {super.key,
+      required this.roomID,
+      required this.user,
+      required this.challenges});
 
   @override
   State<ChallengeChooser> createState() => _ChallengeChooserState();
 }
 
 class _ChallengeChooserState extends State<ChallengeChooser> {
+  late String chosenChallenge;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _setChallenge();
+  }
+
+  Future<void> _setChallenge() async {
+    chosenChallenge = await chooseChallenge(widget.challenges, widget.roomID);
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    logger.v("Receiving $chosenChallenge");
     return Scaffold(
       body: ChallengeDrawerAnimation(
-        challenges: [
-          'Do 10 push-ups',
-          'Take a funny selfie',
-          'Make a paper airplane',
-          'Balance a book on your head',
-          'Dance for 30 seconds',
-        ],
-        finalWord: "Take a funny selfie",
+        challenges: widget.challenges.map((e) => e.description).toList(),
+        finalWord: chosenChallenge,
         wordDuration: Duration(milliseconds: 500),
-        finalWordDuration: Duration(seconds: 5),
+        finalWordDuration: const Duration(seconds: 5),
       ),
     );
   }

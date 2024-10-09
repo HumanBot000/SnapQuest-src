@@ -2,19 +2,21 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import '../main.dart';
+
 class ChallengeDrawerAnimation extends StatefulWidget {
   final List<String> challenges;
   final String finalWord;
   final Duration wordDuration;
-  final Duration finalWordDuration; // New parameter for final word duration
+  final Duration finalWordDuration;
 
   const ChallengeDrawerAnimation({
-    Key? key,
+    super.key,
     required this.challenges,
     required this.finalWord,
     required this.wordDuration,
-    required this.finalWordDuration, // Initialize new parameter
-  }) : super(key: key);
+    required this.finalWordDuration,
+  });
 
   @override
   _ChallengeDrawerAnimationState createState() =>
@@ -26,7 +28,7 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
   late AnimationController _controller;
   late Animation<double> _animation;
   int _currentIndex = 0;
-  bool _isDrawing = true;
+  bool? _isDrawing = null;
   int wordsShown = 0;
   final Random random = Random();
   final player = AudioPlayer();
@@ -57,29 +59,24 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
   }
 
   Future<void> _animateChallenges() async {
-    while (_isDrawing) {
+    while (_isDrawing!) {
       await Future.delayed(widget.wordDuration);
-      _currentIndex++;
-      if (_currentIndex < widget.challenges.length) {
-        _controller.forward(from: 0);
-      } else {
-        await _playSoundEffect();
-        _currentIndex = random.nextInt(widget.challenges.length);
-        _controller.forward(from: 0);
-      }
+      _currentIndex = random.nextInt(widget.challenges.length);
       wordsShown++;
-      if (wordsShown > widget.challenges.length * 3) {
+      _controller.forward(from: 0);
+      if (wordsShown > 5) {
         await _showFinalWord();
+        break;
       }
     }
   }
 
   Future<void> _showFinalWord() async {
-    _isDrawing = false;
     await Future.delayed(widget.finalWordDuration);
     _controller.stop();
     setState(() {
       _currentIndex = -1;
+      _isDrawing = false;
     });
   }
 
@@ -100,26 +97,27 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
             child: Transform.translate(
               offset: Offset(0, (_animation.value - 0.5) * 100),
               child: Text(
-                _isDrawing
+                _currentIndex > 0
                     ? widget.challenges[_currentIndex < widget.challenges.length
                         ? _currentIndex
                         : 0]
                     : widget.finalWord,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           ElevatedButton(
             onPressed: () {
-              if (_isDrawing) {
+              if (_isDrawing!) {
                 _isDrawing = false;
                 _controller.stop();
               } else {
                 _startDrawing();
               }
             },
-            child: Text(_isDrawing ? 'Draw Challenge' : 'Draw Again'),
+            child: Text(_isDrawing! ? 'Draw Challenge' : 'Draw Again'),
           ),
         ],
       ),

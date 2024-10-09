@@ -4,8 +4,10 @@ import 'package:appwrite_hackathon_2024/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../animations/Waiting.dart';
+import '../../../classes/Challenge.dart';
 import '../../../userAuth/auth_service.dart';
 import '../../challengeChooser/Widgets/ChallengeChooser.dart';
+import '../../challengeChooser/Widgets/management/getChallenges.dart';
 import '../../home.dart';
 import '../config.dart';
 import '../management/matchmaking.dart';
@@ -178,9 +180,80 @@ class _WaitRoomState extends State<WaitRoom> {
                 }),
           ),
           ElevatedButton(
-              onPressed: () => Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => ChallengeChooser())),
-              child: Text("Start Game (Debug)")),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FutureBuilder<bool>(
+                    future: roomIsOutdoor(widget.roomID),
+                    builder: (context, outdoorSnapshot) {
+                      if (outdoorSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Scaffold(
+                          appBar: AppBar(title: const Text("Loading Room Info")),
+                          body: const Center(child: CircularProgressIndicator()),
+                        );
+                      } else if (outdoorSnapshot.hasError) {
+                        logger.e("Error: ${outdoorSnapshot.error}");
+                        return Scaffold(
+                          appBar: AppBar(title: const Text("Error")),
+                          body: Center(
+                              child: Text('Error: ${outdoorSnapshot.error}')),
+                        );
+                      } else if (outdoorSnapshot.hasData) {
+                        logger.i("Room is Outdoor: ${outdoorSnapshot.data}");
+                        return FutureBuilder<List<Challenge>>(
+                          future:
+                              getChallenges(isOutdoor: outdoorSnapshot.data!),
+                          builder: (context, challengeSnapshot) {
+                            if (challengeSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Scaffold(
+                                appBar:
+                                    AppBar(title: const Text("Loading Challenges")),
+                                body:
+                                    const Center(child: CircularProgressIndicator()),
+                              );
+                            } else if (challengeSnapshot.hasError) {
+                              logger.e("Error: ${challengeSnapshot.error}");
+                              return Scaffold(
+                                appBar: AppBar(title: const Text("Error")),
+                                body: Center(
+                                    child: Text(
+                                        'Error: ${challengeSnapshot.error}')),
+                              );
+                            } else if (challengeSnapshot.hasData &&
+                                challengeSnapshot.data!.isNotEmpty) {
+                              return ChallengeChooser(
+                                roomID: widget.roomID,
+                                user: widget.user,
+                                challenges: challengeSnapshot.data!,
+                              );
+                            } else {
+                              logger.w("No challenges available");
+                              return Scaffold(
+                                appBar:
+                                    AppBar(title: const Text("No Challenges Found")),
+                                body: const Center(
+                                    child: Text('No challenges available')),
+                              );
+                            }
+                          },
+                        );
+                      } else {
+                        return Scaffold(
+                          appBar: AppBar(title: const Text("Room Info Not Found")),
+                          body: const Center(
+                              child: Text('Room information not available')),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
+            child: const Text("Start Game (Debug)"),
+          ),
           ElevatedButton(
               style: ButtonStyle(
                   backgroundColor:

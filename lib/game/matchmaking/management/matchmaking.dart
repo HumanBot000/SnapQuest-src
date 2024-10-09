@@ -26,7 +26,7 @@ Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
       if (response.total == 0) {
         return currentCheckingRoom;
       }
-      if (await _roomIsOutdoor(currentCheckingRoom) == isOutdoor) {
+      if (await roomIsOutdoor(currentCheckingRoom) == isOutdoor) {
         return currentCheckingRoom;
       }
       currentCheckingRoom++;
@@ -37,7 +37,7 @@ Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
   }
 }
 
-Future<bool> _roomIsOutdoor(int roomID) async {
+Future<bool> roomIsOutdoor(int roomID) async {
   final response = await databases.listDocuments(
       databaseId: appDatabase,
       collectionId: matchmakingCollection,
@@ -76,13 +76,13 @@ Future<String> _addPlayerToRoom(
 }
 
 Future<void> removePlayerFromRoom(
-    BuildContext context, String user_email) async {
+    BuildContext context, String userEmail) async {
   // Removes the current user from the room
   final response = await databases.listDocuments(
       databaseId: appDatabase,
       collectionId: matchmakingCollection,
       queries: [
-        Query.equal('user_email', user_email),
+        Query.equal('user_email', userEmail),
       ]);
   if (response.total == 0) {
     logger.w("User is not in a room");
