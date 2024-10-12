@@ -47,7 +47,6 @@ class _ChallengeChooserState extends State<ChallengeChooser> {
         ),
       );
     }
-    logger.v("Receiving $chosenChallenge");
     return Scaffold(
       body: ChallengeDrawerAnimation(
         challenges: widget.challenges.map((e) => e.description).toList(),

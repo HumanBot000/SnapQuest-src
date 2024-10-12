@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../enums/appwrite.dart';
 import '../../../main.dart';
 import '../Widgets/WaitingForPlayers.dart';
-import '../config.dart';
+import '../../../enums/gameConfig.dart';
 
 Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
   int currentCheckingRoom = 1;

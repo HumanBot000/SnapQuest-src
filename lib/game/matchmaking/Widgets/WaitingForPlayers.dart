@@ -7,9 +7,10 @@ import '../../../animations/Waiting.dart';
 import '../../../classes/Challenge.dart';
 import '../../../userAuth/auth_service.dart';
 import '../../challengeChooser/Widgets/ChallengeChooser.dart';
+
 import '../../challengeChooser/Widgets/management/getChallenges.dart';
 import '../../home.dart';
-import '../config.dart';
+import '../../../enums/gameConfig.dart';
 import '../management/matchmaking.dart';
 
 class WaitRoom extends StatefulWidget {
@@ -18,6 +19,7 @@ class WaitRoom extends StatefulWidget {
   final User user;
   final String documentId;
   final int roomID;
+
   const WaitRoom(
       {super.key,
       required this.playerNames,
@@ -32,11 +34,35 @@ class WaitRoom extends StatefulWidget {
 class _WaitRoomState extends State<WaitRoom> {
   RealtimeSubscription? realtimeRoomMembersSubscription;
   late List<String> playerNames;
+
   @override
   void initState() {
-    subscribeToRoomMemberUpdate();
-    playerNames = List.from(widget.playerNames);
     super.initState();
+    playerNames = List.from(widget.playerNames);
+    subscribeToRoomMemberUpdate();
+    if (playerNames.contains(widget.user.name) &&
+        playerNames.length >= maxPlayersPerRoom) {
+      // User is already in the room and the room is ful
+      isNavigatingAfterFullRoom = true;
+      roomIsOutdoor(widget.roomID).then((isOutdoor) {
+        return getChallenges(isOutdoor: isOutdoor);
+      }).then((challenges) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChallengeChooser(
+              roomID: widget.roomID,
+              user: widget.user,
+              challenges: challenges,
+            ),
+          ),
+        );
+      }).catchError((error) {
+        logger.e("Failed to get room or challenge data: $error");
+      }).whenComplete(() {
+        isNavigatingAfterFullRoom = false;
+      });
+    }
   }
 
   @override
@@ -45,46 +71,77 @@ class _WaitRoomState extends State<WaitRoom> {
     super.dispose();
   }
 
+  bool isNavigatingAfterFullRoom = false;
+
   void subscribeToRoomMemberUpdate() {
     final realtime = Realtime(client);
 
     realtimeRoomMembersSubscription = realtime.subscribe(['documents']);
 
-    // listen to changes
+    // Listen to changes
     realtimeRoomMembersSubscription!.stream.listen((data) {
       final event = data.events.first;
       final payload = data.payload;
       List<String> updatedPlayerNames = List.from(playerNames);
+
       if (payload["room_id"] != widget.roomID) {
         return;
       }
       if (event.endsWith("create")) {
         logger.i("${payload["user_name"]} joined the room");
-        updatedPlayerNames.add(payload["user_name"]);
-        setState(() {
-          playerNames = updatedPlayerNames;
-        });
+        if (!updatedPlayerNames.contains(payload["user_name"])) {
+          updatedPlayerNames.add(payload["user_name"]);
+          setState(() {
+            playerNames = updatedPlayerNames;
+          });
+        }
+        if (!isNavigatingAfterFullRoom &&
+            playerNames.length >= maxPlayersPerRoom) {
+          isNavigatingAfterFullRoom = true;
+          roomIsOutdoor(widget.roomID).then((isOutdoor) {
+            return getChallenges(isOutdoor: isOutdoor);
+          }).then((challenges) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChallengeChooser(
+                  roomID: widget.roomID,
+                  user: widget.user,
+                  challenges: challenges,
+                ),
+              ),
+            );
+          }).catchError((error) {
+            logger.e("Failed to get room or challenge data: $error");
+          }).whenComplete(() {
+            isNavigatingAfterFullRoom = false;
+          });
+        }
       } else if (event.endsWith("delete")) {
         if (payload["user_email"] == widget.user.email) {
           logger.i(
-              "User got kicked out of Room ${payload["room_id"]} (🤫He could also have left, I have no way of knowing that 😅)");
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => Home(user: widget.user)));
+              "User got kicked out of Room ${payload["room_id"]} (could have left as well)");
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Home(user: widget.user)),
+          );
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text(
-                  "You got kicked out of the Matchmaking. To join a different room, try again.")));
+            content: Text(
+                "You got kicked out of the Matchmaking. To join a different room, try again."),
+          ));
+
           return;
         }
-        if (!updatedPlayerNames.contains(payload["user_name"])) {
+        if (updatedPlayerNames.contains(payload["user_name"])) {
+          logger.i("${payload["user_name"]} left the room");
+          updatedPlayerNames.remove(payload["user_name"]);
+          setState(() {
+            playerNames = updatedPlayerNames;
+          });
+        } else {
           logger.wtf(
-              "${payload["user_name"]} left the room but somehow he wasn't even present in the clients memory?");
-          return;
+              "${payload["user_name"]} left the room but wasn't in the client memory.");
         }
-        logger.i("${payload["user_name"]} left the room");
-        updatedPlayerNames.remove(payload["user_name"]);
-        setState(() {
-          playerNames = updatedPlayerNames;
-        });
       }
     });
   }
@@ -170,7 +227,6 @@ class _WaitRoomState extends State<WaitRoom> {
                             children: [
                               WaitingDots(),
                               const Text("Waiting for Player"),
-                              // Add the animated dots here
                             ],
                           )
                         ],
@@ -190,8 +246,10 @@ class _WaitRoomState extends State<WaitRoom> {
                       if (outdoorSnapshot.connectionState ==
                           ConnectionState.waiting) {
                         return Scaffold(
-                          appBar: AppBar(title: const Text("Loading Room Info")),
-                          body: const Center(child: CircularProgressIndicator()),
+                          appBar:
+                              AppBar(title: const Text("Loading Room Info")),
+                          body:
+                              const Center(child: CircularProgressIndicator()),
                         );
                       } else if (outdoorSnapshot.hasError) {
                         logger.e("Error: ${outdoorSnapshot.error}");
@@ -209,10 +267,10 @@ class _WaitRoomState extends State<WaitRoom> {
                             if (challengeSnapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Scaffold(
-                                appBar:
-                                    AppBar(title: const Text("Loading Challenges")),
-                                body:
-                                    const Center(child: CircularProgressIndicator()),
+                                appBar: AppBar(
+                                    title: const Text("Loading Challenges")),
+                                body: const Center(
+                                    child: CircularProgressIndicator()),
                               );
                             } else if (challengeSnapshot.hasError) {
                               logger.e("Error: ${challengeSnapshot.error}");
@@ -232,8 +290,8 @@ class _WaitRoomState extends State<WaitRoom> {
                             } else {
                               logger.w("No challenges available");
                               return Scaffold(
-                                appBar:
-                                    AppBar(title: const Text("No Challenges Found")),
+                                appBar: AppBar(
+                                    title: const Text("No Challenges Found")),
                                 body: const Center(
                                     child: Text('No challenges available')),
                               );
@@ -242,7 +300,8 @@ class _WaitRoomState extends State<WaitRoom> {
                         );
                       } else {
                         return Scaffold(
-                          appBar: AppBar(title: const Text("Room Info Not Found")),
+                          appBar:
+                              AppBar(title: const Text("Room Info Not Found")),
                           body: const Center(
                               child: Text('Room information not available')),
                         );
