@@ -107,18 +107,6 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
               ),
             ),
           ),
-          const SizedBox(height: 50),
-          ElevatedButton(
-            onPressed: () {
-              if (_isDrawing!) {
-                _isDrawing = false;
-                _controller.stop();
-              } else {
-                _startDrawing();
-              }
-            },
-            child: Text(_isDrawing! ? 'Draw Challenge' : 'Draw Again'),
-          ),
         ],
       ),
     );
