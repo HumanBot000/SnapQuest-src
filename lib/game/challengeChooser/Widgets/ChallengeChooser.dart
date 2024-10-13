@@ -2,6 +2,7 @@ import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import '../../../animations/ChallengeChoosing.dart';
 import '../../../classes/Challenge.dart';
+import '../../live/management/navigation.dart';
 import 'management/setChallenge.dart';
 
 class ChallengeChooser extends StatefulWidget {
@@ -47,11 +48,12 @@ class _ChallengeChooserState extends State<ChallengeChooser> {
     }
     return Scaffold(
       body: ChallengeDrawerAnimation(
-        challenges: widget.challenges.map((e) => e.description).toList(),
-        finalWord: chosenChallenge,
-        wordDuration: Duration(milliseconds: 500),
-        finalWordDuration: const Duration(seconds: 5),
-      ),
+          challenges: widget.challenges,
+          finalChallenge: widget.challenges.firstWhere(
+              (challenge) => challenge.description == chosenChallenge),
+          wordDuration: Duration(seconds: 1),
+          finalWordDuration: const Duration(seconds: 5),
+          onFinished: navigateToGameScreen),
     );
   }
 }
