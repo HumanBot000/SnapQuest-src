@@ -15,14 +15,35 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Name Follows Later',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60.0),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primaryContainer,
+                Theme.of(context).colorScheme.secondary
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            title: const Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Text(
+                  "Name follows later",
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                )
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SingleChildScrollView(
         child: Column(
