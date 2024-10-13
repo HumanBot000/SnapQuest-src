@@ -1,9 +1,7 @@
 import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
-
 import '../../../animations/ChallengeChoosing.dart';
 import '../../../classes/Challenge.dart';
-import '../../../main.dart';
 import 'management/setChallenge.dart';
 
 class ChallengeChooser extends StatefulWidget {
