@@ -38,7 +38,6 @@ Future<String?> _getChallengeFromDB(int roomID) async {
 }
 
 Future<String> chooseChallenge(List<Challenge> challenges, int roomID) async {
-  //Checks if a challenge is already set, if not set it and return it, if yes return the set challenge
   return (await _writeChallengeToDB(
       roomID, challenges[Random().nextInt(challenges.length)]))!;
 }

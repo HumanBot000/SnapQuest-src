@@ -1,10 +1,13 @@
 import 'package:appwrite_hackathon_2024/animations/GradientText.dart';
 import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
+import 'package:appwrite_hackathon_2024/game/live/Widgets/FilmingModeSelector.dart';
 import 'package:appwrite_hackathon_2024/game/live/Widgets/Timer.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class RunningGame extends StatefulWidget {
   final Challenge activeChallenge;
+
   RunningGame({required this.activeChallenge});
 
   @override
@@ -12,6 +15,33 @@ class RunningGame extends StatefulWidget {
 }
 
 class _RunningGameState extends State<RunningGame> {
+  late CameraController controller;
+  late List<CameraDescription> cameras;
+  bool isCameraInitialized = false;
+
+  Future<void> _loadCameras() async {
+    cameras = await availableCameras();
+    controller = CameraController(cameras[0], ResolutionPreset.max);
+    await controller.initialize();
+    if (mounted) {
+      setState(() {
+        isCameraInitialized = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCameras();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +53,7 @@ class _RunningGameState extends State<RunningGame> {
               colors: [
                 Theme.of(context).colorScheme.primary,
                 Theme.of(context).colorScheme.primaryContainer,
-                Theme.of(context).colorScheme.secondary
+                Theme.of(context).colorScheme.secondary,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -40,7 +70,10 @@ class _RunningGameState extends State<RunningGame> {
                     Theme.of(context).colorScheme.onSecondary,
                     Theme.of(context).colorScheme.primary,
                   ]),
-                )
+                  style: TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
             backgroundColor: Colors.transparent,
@@ -49,10 +82,29 @@ class _RunningGameState extends State<RunningGame> {
         ),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(child: CountdownTimer(initialMinutes: 1)),
+          Expanded(
+            child: CountdownTimer(initialMinutes: 1),
+          ),
+          if (isCameraInitialized)
+            Container(
+              margin: const EdgeInsets.all(32),
+              child: Stack(
+                alignment: AlignmentDirectional.bottomStart,
+                children: [
+                  CameraPreview(controller),
+                  FilmingModeSelector(activeChallenge: widget.activeChallenge)
+                ],
+              ),
+            )
+          else
+            Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
         ],
       ),
     );

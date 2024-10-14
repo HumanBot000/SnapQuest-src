@@ -22,7 +22,7 @@ class GradientText extends StatelessWidget {
         text,
         style: style,
         softWrap: true,
-        overflow: TextOverflow.visible,
+        overflow: TextOverflow.fade,
       ),
     );
   }

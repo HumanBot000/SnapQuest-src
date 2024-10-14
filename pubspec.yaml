@@ -36,6 +36,7 @@ dependencies:
   appwrite_auth_kit: ^0.10.0
   shared_preferences: ^2.0.18
   audioplayers: ^6.1.0
+  camera: ^0.9.4+5
 dev_dependencies:
   flutter_test:
     sdk: flutter
