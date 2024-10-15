@@ -47,7 +47,7 @@ class _ConfirmImageState extends State<ConfirmImage> {
                     Theme.of(context).colorScheme.primary,
                   ]),
                   style: const TextStyle(
-                    overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.visible,
                   ),
                 ),
               ],
