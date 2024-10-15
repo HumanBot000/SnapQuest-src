@@ -1,22 +1,23 @@
 import 'dart:io';
 
+import 'package:appwrite_hackathon_2024/game/live/MediaValidation/Widgets/Buttons.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../animations/GradientText.dart';
 import '../../Widgets/Timer.dart';
 
-class ConfirmMedia extends StatefulWidget {
+class ConfirmImage extends StatefulWidget {
   final XFile image;
   final Duration timeRemaining;
-  const ConfirmMedia(
+  const ConfirmImage(
       {super.key, required this.image, required this.timeRemaining});
 
   @override
-  State<ConfirmMedia> createState() => _ConfirmMediaState();
+  State<ConfirmImage> createState() => _ConfirmImageState();
 }
 
-class _ConfirmMediaState extends State<ConfirmMedia> {
+class _ConfirmImageState extends State<ConfirmImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +40,7 @@ class _ConfirmMediaState extends State<ConfirmMedia> {
               alignment: WrapAlignment.center,
               children: [
                 GradientText(
-                  "Do you want to publish that Image?",
+                  "Do you want to publish this Image?",
                   gradient: LinearGradient(colors: [
                     Theme.of(context).colorScheme.secondary,
                     Theme.of(context).colorScheme.onSecondary,
@@ -69,18 +70,7 @@ class _ConfirmMediaState extends State<ConfirmMedia> {
                   Image.file(
                     File(widget.image.path),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.delete),
-                        style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(
-                                Theme.of(context).colorScheme.primary)),
-                      ),
-                    ],
-                  )
+                  const ConfirmationButtons(),
                 ],
               ),
             ],

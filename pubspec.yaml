@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^2.0.18
   audioplayers: ^6.1.0
   camera: ^0.9.4+5
+  video_player: ^2.2.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

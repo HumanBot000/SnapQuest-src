@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 
 class FilmingModeSelector extends StatefulWidget {
   final Challenge activeChallenge;
-  const FilmingModeSelector({super.key, required this.activeChallenge});
+  final void Function(bool) setMediaType;
+  final void Function(bool) toggleMic;
+  const FilmingModeSelector(
+      {super.key,
+      required this.activeChallenge,
+      required this.setMediaType,
+      required this.toggleMic});
 
   @override
   State<FilmingModeSelector> createState() => _FilmingModeSelectorState();
@@ -16,12 +22,14 @@ class _FilmingModeSelectorState extends State<FilmingModeSelector> {
   void _selectVideo() {
     setState(() {
       videoIsSelected = true;
+      widget.setMediaType(false);
     });
   }
 
   void _selectPhoto() {
     setState(() {
       videoIsSelected = false;
+      widget.setMediaType(true);
     });
   }
 
@@ -29,6 +37,7 @@ class _FilmingModeSelectorState extends State<FilmingModeSelector> {
     setState(() {
       micIsEnabled = !micIsEnabled;
     });
+    widget.toggleMic(micIsEnabled);
   }
 
   @override
@@ -82,7 +91,7 @@ class _FilmingModeSelectorState extends State<FilmingModeSelector> {
                     Icons.block,
                     color: Colors.red,
                     size: 40,
-                  )
+                  ),
                 ],
               ),
         if (videoIsSelected)

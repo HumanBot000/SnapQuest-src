@@ -1,7 +1,7 @@
 import 'package:appwrite_hackathon_2024/animations/GradientText.dart';
 import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
 import 'package:appwrite_hackathon_2024/game/live/Widgets/FilmingModeSelector.dart';
-import 'package:appwrite_hackathon_2024/game/live/Widgets/TakePicture.dart';
+import 'package:appwrite_hackathon_2024/game/live/Widgets/CaptureMedia.dart';
 import 'package:appwrite_hackathon_2024/game/live/Widgets/Timer.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -20,16 +20,35 @@ class _RunningGameState extends State<RunningGame> {
   late List<CameraDescription> cameras;
   bool isCameraInitialized = false;
   final Duration _timeRemaining = const Duration(minutes: 1);
+  bool takePicture = true;
+  bool micEnabled = true;
 
   Future<void> _loadCameras() async {
     cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    controller = CameraController(
+        enableAudio: micEnabled,
+        cameras.firstWhere(
+            (camera) => camera.lensDirection == CameraLensDirection.back),
+        ResolutionPreset.medium);
     await controller.initialize();
     if (mounted) {
       setState(() {
         isCameraInitialized = true;
       });
     }
+  }
+
+  void _setMediaType(bool isPhoto) {
+    setState(() {
+      takePicture = isPhoto;
+    });
+  }
+
+  void _toggleMic(bool isEnabled) {
+    setState(() {
+      micEnabled = isEnabled;
+    });
+    _loadCameras();
   }
 
   @override
@@ -91,7 +110,7 @@ class _RunningGameState extends State<RunningGame> {
             initialDuration: _timeRemaining,
           ),
           const Text(
-              "Take a picture or video of this challenge. You have max. 1 minute time. Whoever finished first, wins!",
+              "Take a picture or video of this challenge. You have max. 1 minute time. Whoever finishes first, wins!",
               textAlign: TextAlign.center),
           if (isCameraInitialized)
             Container(
@@ -100,10 +119,15 @@ class _RunningGameState extends State<RunningGame> {
                 alignment: AlignmentDirectional.bottomStart,
                 children: [
                   CameraPreview(controller),
-                  FilmingModeSelector(activeChallenge: widget.activeChallenge),
-                  TakePicture(
+                  FilmingModeSelector(
+                    activeChallenge: widget.activeChallenge,
+                    setMediaType: _setMediaType,
+                    toggleMic: _toggleMic,
+                  ),
+                  CaptureMedia(
                     controller: controller,
                     timeRemaining: _timeRemaining,
+                    takePicture: takePicture,
                   )
                 ],
               ),
