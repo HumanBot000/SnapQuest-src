@@ -1,6 +1,7 @@
 import 'package:appwrite_hackathon_2024/animations/GradientText.dart';
 import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
 import 'package:appwrite_hackathon_2024/game/live/Widgets/FilmingModeSelector.dart';
+import 'package:appwrite_hackathon_2024/game/live/Widgets/TakePicture.dart';
 import 'package:appwrite_hackathon_2024/game/live/Widgets/Timer.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 class RunningGame extends StatefulWidget {
   final Challenge activeChallenge;
 
-  RunningGame({required this.activeChallenge});
+  const RunningGame({super.key, required this.activeChallenge});
 
   @override
   State<RunningGame> createState() => _RunningGameState();
@@ -18,10 +19,11 @@ class _RunningGameState extends State<RunningGame> {
   late CameraController controller;
   late List<CameraDescription> cameras;
   bool isCameraInitialized = false;
+  final Duration _timeRemaining = const Duration(minutes: 1);
 
   Future<void> _loadCameras() async {
     cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.max);
+    controller = CameraController(cameras[0], ResolutionPreset.medium);
     await controller.initialize();
     if (mounted) {
       setState(() {
@@ -70,7 +72,7 @@ class _RunningGameState extends State<RunningGame> {
                     Theme.of(context).colorScheme.onSecondary,
                     Theme.of(context).colorScheme.primary,
                   ]),
-                  style: TextStyle(
+                  style: const TextStyle(
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -85,17 +87,24 @@ class _RunningGameState extends State<RunningGame> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: CountdownTimer(initialMinutes: 1),
+          CountdownTimer(
+            initialDuration: _timeRemaining,
           ),
+          const Text(
+              "Take a picture or video of this challenge. You have max. 1 minute time. Whoever finished first, wins!",
+              textAlign: TextAlign.center),
           if (isCameraInitialized)
             Container(
-              margin: const EdgeInsets.all(32),
+              padding: const EdgeInsets.fromLTRB(8, 32, 8, 16),
               child: Stack(
                 alignment: AlignmentDirectional.bottomStart,
                 children: [
                   CameraPreview(controller),
-                  FilmingModeSelector(activeChallenge: widget.activeChallenge)
+                  FilmingModeSelector(activeChallenge: widget.activeChallenge),
+                  TakePicture(
+                    controller: controller,
+                    timeRemaining: _timeRemaining,
+                  )
                 ],
               ),
             )

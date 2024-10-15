@@ -88,7 +88,7 @@ class _FilmingModeSelectorState extends State<FilmingModeSelector> {
         if (videoIsSelected)
           Padding(
             padding:
-                EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.45),
+                EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.55),
             child: IconButton(
               onPressed: () => _switchMic(),
               icon: Icon(Icons.mic,

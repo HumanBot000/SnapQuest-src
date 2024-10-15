@@ -51,7 +51,7 @@ class _ChallengeChooserState extends State<ChallengeChooser> {
           challenges: widget.challenges,
           finalChallenge: widget.challenges.firstWhere(
               (challenge) => challenge.description == chosenChallenge),
-          wordDuration: Duration(seconds: 1),
+          wordDuration: const Duration(seconds: 1),
           finalWordDuration: const Duration(seconds: 3),
           onFinished: navigateToGameScreen),
     );

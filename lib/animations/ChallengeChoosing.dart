@@ -30,7 +30,7 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
   late AnimationController _controller;
   late Animation<double> _animation;
   int _currentIndex = 0;
-  bool? _isDrawing = null;
+  bool? _isDrawing;
   int wordsShown = 0;
   final Random random = Random();
   final player = AudioPlayer();
