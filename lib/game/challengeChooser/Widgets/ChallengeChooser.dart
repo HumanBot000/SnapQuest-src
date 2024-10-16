@@ -48,6 +48,8 @@ class _ChallengeChooserState extends State<ChallengeChooser> {
     }
     return Scaffold(
       body: ChallengeDrawerAnimation(
+          roomID: widget.roomID,
+          user: widget.user,
           challenges: widget.challenges,
           finalChallenge: widget.challenges.firstWhere(
               (challenge) => challenge.description == chosenChallenge),

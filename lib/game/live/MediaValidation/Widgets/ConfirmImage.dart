@@ -1,17 +1,22 @@
-import 'dart:io';
-
+import 'dart:io' as io;
+import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/game/live/MediaValidation/Widgets/Buttons.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../animations/GradientText.dart';
 import '../../Widgets/Timer.dart';
 
 class ConfirmImage extends StatefulWidget {
   final XFile image;
   final Duration timeRemaining;
+  final int roomID;
+  final User user;
   const ConfirmImage(
-      {super.key, required this.image, required this.timeRemaining});
+      {super.key,
+      required this.image,
+      required this.timeRemaining,
+      required this.roomID,
+      required this.user});
 
   @override
   State<ConfirmImage> createState() => _ConfirmImageState();
@@ -68,9 +73,13 @@ class _ConfirmImageState extends State<ConfirmImage> {
                 alignment: Alignment.bottomCenter,
                 children: [
                   Image.file(
-                    File(widget.image.path),
+                    io.File(widget.image.path),
                   ),
-                  const ConfirmationButtons(),
+                  ConfirmationButtons(
+                    file: widget.image,
+                    user: widget.user,
+                    roomID: widget.roomID,
+                  ),
                 ],
               ),
             ],

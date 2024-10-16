@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/main.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,15 @@ class CaptureMedia extends StatefulWidget {
   final CameraController controller;
   final Duration timeRemaining;
   final bool takePicture;
+  final int roomID;
+  final User user;
   const CaptureMedia({
     super.key,
     required this.controller,
     required this.timeRemaining,
     required this.takePicture,
+    required this.roomID,
+    required this.user,
   });
 
   @override
@@ -55,6 +60,8 @@ class _CaptureMediaState extends State<CaptureMedia>
         MaterialPageRoute(
           builder: (context) => ConfirmVideo(
             video: file,
+            roomID: widget.roomID,
+            user: widget.user,
             timeRemaining: widget.timeRemaining,
           ),
         ),
@@ -75,6 +82,8 @@ class _CaptureMediaState extends State<CaptureMedia>
               context,
               MaterialPageRoute(
                 builder: (context) => ConfirmVideo(
+                  roomID: widget.roomID,
+                  user: widget.user,
                   video: file,
                   timeRemaining: widget.timeRemaining,
                 ),
@@ -117,6 +126,8 @@ class _CaptureMediaState extends State<CaptureMedia>
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConfirmImage(
+                          user: widget.user,
+                          roomID: widget.roomID,
                           image: image,
                           timeRemaining: widget.timeRemaining,
                         ),

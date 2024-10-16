@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' as io;
+import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/game/live/MediaValidation/Widgets/Buttons.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,14 @@ import '../../Widgets/Timer.dart';
 class ConfirmVideo extends StatefulWidget {
   final XFile video;
   final Duration timeRemaining;
-
+  final int roomID;
+  final User user;
   const ConfirmVideo(
-      {super.key, required this.video, required this.timeRemaining});
+      {super.key,
+      required this.video,
+      required this.timeRemaining,
+      required this.roomID,
+      required this.user});
 
   @override
   State<ConfirmVideo> createState() => _ConfirmVideoState();
@@ -29,12 +35,12 @@ class _ConfirmVideoState extends State<ConfirmVideo> {
 
   Future<void> _initVideoPlayer() async {
     _videoPlayerController =
-        VideoPlayerController.file(File(widget.video.path));
+        VideoPlayerController.file(io.File(widget.video.path));
     await _videoPlayerController.initialize();
     await _videoPlayerController.setLooping(true);
     await _videoPlayerController.play();
     setState(() {
-      _isVideoInitialized = true; // Mark the video as initialized
+      _isVideoInitialized = true;
     });
   }
 
@@ -100,7 +106,11 @@ class _ConfirmVideoState extends State<ConfirmVideo> {
                     ),
                   ),
                 ),
-                const ConfirmationButtons(),
+                ConfirmationButtons(
+                  file: widget.video,
+                  user: widget.user,
+                  roomID: widget.roomID,
+                ),
               ],
             )
           : const Center(

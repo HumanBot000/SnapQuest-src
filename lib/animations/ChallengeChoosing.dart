@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../classes/Challenge.dart';
@@ -10,7 +11,8 @@ class ChallengeDrawerAnimation extends StatefulWidget {
   final Duration wordDuration;
   final Duration finalWordDuration;
   final Function onFinished;
-
+  final User user;
+  final int roomID;
   const ChallengeDrawerAnimation({
     super.key,
     required this.challenges,
@@ -18,6 +20,8 @@ class ChallengeDrawerAnimation extends StatefulWidget {
     required this.wordDuration,
     required this.finalWordDuration,
     required this.onFinished,
+    required this.user,
+    required this.roomID,
   });
 
   @override
@@ -91,7 +95,8 @@ class _ChallengeDrawerAnimationState extends State<ChallengeDrawerAnimation>
     });
     await Future.delayed(widget.finalWordDuration);
     await _fadeController.forward();
-    widget.onFinished(context, widget.finalChallenge);
+    widget.onFinished(
+        context, widget.finalChallenge, widget.user, widget.roomID);
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/animations/GradientText.dart';
 import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
 import 'package:appwrite_hackathon_2024/game/live/Widgets/FilmingModeSelector.dart';
@@ -8,8 +9,14 @@ import 'package:flutter/material.dart';
 
 class RunningGame extends StatefulWidget {
   final Challenge activeChallenge;
+  final int roomID;
+  final User user;
 
-  const RunningGame({super.key, required this.activeChallenge});
+  const RunningGame(
+      {super.key,
+      required this.activeChallenge,
+      required this.roomID,
+      required this.user});
 
   @override
   State<RunningGame> createState() => _RunningGameState();
@@ -125,6 +132,8 @@ class _RunningGameState extends State<RunningGame> {
                     toggleMic: _toggleMic,
                   ),
                   CaptureMedia(
+                    user: widget.user,
+                    roomID: widget.roomID,
                     controller: controller,
                     timeRemaining: _timeRemaining,
                     takePicture: takePicture,
