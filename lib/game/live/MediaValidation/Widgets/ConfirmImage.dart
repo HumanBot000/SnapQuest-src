@@ -4,6 +4,7 @@ import 'package:appwrite_hackathon_2024/game/live/MediaValidation/Widgets/Button
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../../../../animations/GradientText.dart';
+import '../../../../classes/Challenge.dart';
 import '../../Widgets/Timer.dart';
 
 class ConfirmImage extends StatefulWidget {
@@ -11,12 +12,14 @@ class ConfirmImage extends StatefulWidget {
   final Duration timeRemaining;
   final int roomID;
   final User user;
+  final Challenge challenge;
   const ConfirmImage(
       {super.key,
       required this.image,
       required this.timeRemaining,
       required this.roomID,
-      required this.user});
+      required this.user,
+      required this.challenge});
 
   @override
   State<ConfirmImage> createState() => _ConfirmImageState();
@@ -79,6 +82,8 @@ class _ConfirmImageState extends State<ConfirmImage> {
                     file: widget.image,
                     user: widget.user,
                     roomID: widget.roomID,
+                    timeRemaining: widget.timeRemaining,
+                    challenge: widget.challenge,
                   ),
                 ],
               ),

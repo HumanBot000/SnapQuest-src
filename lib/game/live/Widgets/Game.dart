@@ -132,6 +132,7 @@ class _RunningGameState extends State<RunningGame> {
                     toggleMic: _toggleMic,
                   ),
                   CaptureMedia(
+                    challenge: widget.activeChallenge,
                     user: widget.user,
                     roomID: widget.roomID,
                     controller: controller,

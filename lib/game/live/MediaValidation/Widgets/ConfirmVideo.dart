@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../animations/GradientText.dart';
+import '../../../../classes/Challenge.dart';
 import '../../Widgets/Timer.dart';
 
 class ConfirmVideo extends StatefulWidget {
@@ -12,12 +13,14 @@ class ConfirmVideo extends StatefulWidget {
   final Duration timeRemaining;
   final int roomID;
   final User user;
+  final Challenge challenge;
   const ConfirmVideo(
       {super.key,
       required this.video,
       required this.timeRemaining,
       required this.roomID,
-      required this.user});
+      required this.user,
+      required this.challenge});
 
   @override
   State<ConfirmVideo> createState() => _ConfirmVideoState();
@@ -110,6 +113,8 @@ class _ConfirmVideoState extends State<ConfirmVideo> {
                   file: widget.video,
                   user: widget.user,
                   roomID: widget.roomID,
+                  timeRemaining: widget.timeRemaining,
+                  challenge: widget.challenge,
                 ),
               ],
             )

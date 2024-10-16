@@ -3,6 +3,7 @@ import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/main.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import '../../../classes/Challenge.dart';
 import '../../../enums/gameConfig.dart';
 import '../MediaValidation/Widgets/ConfirmImage.dart';
 import '../MediaValidation/Widgets/ConfirmVideo.dart';
@@ -13,6 +14,7 @@ class CaptureMedia extends StatefulWidget {
   final bool takePicture;
   final int roomID;
   final User user;
+  final Challenge challenge;
   const CaptureMedia({
     super.key,
     required this.controller,
@@ -20,6 +22,7 @@ class CaptureMedia extends StatefulWidget {
     required this.takePicture,
     required this.roomID,
     required this.user,
+    required this.challenge,
   });
 
   @override
@@ -59,6 +62,7 @@ class _CaptureMediaState extends State<CaptureMedia>
         context,
         MaterialPageRoute(
           builder: (context) => ConfirmVideo(
+            challenge: widget.challenge,
             video: file,
             roomID: widget.roomID,
             user: widget.user,
@@ -82,6 +86,7 @@ class _CaptureMediaState extends State<CaptureMedia>
               context,
               MaterialPageRoute(
                 builder: (context) => ConfirmVideo(
+                  challenge: widget.challenge,
                   roomID: widget.roomID,
                   user: widget.user,
                   video: file,
@@ -126,6 +131,7 @@ class _CaptureMediaState extends State<CaptureMedia>
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConfirmImage(
+                          challenge: widget.challenge,
                           user: widget.user,
                           roomID: widget.roomID,
                           image: image,

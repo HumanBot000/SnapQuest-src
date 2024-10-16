@@ -38,6 +38,7 @@ dependencies:
   audioplayers: ^6.1.0
   camera: ^0.9.4+5
   video_player: ^2.2.6
+  swipable_stack: ^2.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
