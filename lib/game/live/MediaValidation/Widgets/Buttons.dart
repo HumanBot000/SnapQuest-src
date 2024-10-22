@@ -3,7 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../../../../classes/Challenge.dart';
 import '../../../../main.dart';
-import '../../check/Widgets/Stack.dart';
+import '../../mediaApproval/Widgets/Stack.dart';
 import '../../management/upload.dart';
 
 class ConfirmationButtons extends StatefulWidget {
@@ -25,7 +25,8 @@ class ConfirmationButtons extends StatefulWidget {
 }
 
 class _ConfirmationButtonsState extends State<ConfirmationButtons> {
-  Future<void> _uploadMedia(XFile file, Duration timeRemaining,Challenge challenge) async {
+  Future<void> _uploadMedia(
+      XFile file, Duration timeRemaining, Challenge challenge) async {
     logger.i("Uploading File");
     try {
       String medium = await uploadFile(file.path, widget.user, widget.roomID);
@@ -38,6 +39,8 @@ class _ConfirmationButtonsState extends State<ConfirmationButtons> {
       return CheckingStack(
         timeRemaining: timeRemaining,
         challenge: challenge,
+        roomID: widget.roomID,
+        user: widget.user,
       );
     }));
   }
@@ -58,7 +61,8 @@ class _ConfirmationButtonsState extends State<ConfirmationButtons> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: IconButton(
-            onPressed: () => _uploadMedia(widget.file, widget.timeRemaining,widget.challenge),
+            onPressed: () => _uploadMedia(
+                widget.file, widget.timeRemaining, widget.challenge),
             icon: const Icon(Icons.check),
             color: Colors.green,
           ),

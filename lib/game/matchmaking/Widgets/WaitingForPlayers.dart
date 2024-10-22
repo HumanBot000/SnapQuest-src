@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../animations/Waiting.dart';
 import '../../../classes/Challenge.dart';
+import '../../../enums/appwrite.dart';
 import '../../../userAuth/auth_service.dart';
 import '../../challengeChooser/Widgets/ChallengeChooser.dart';
 
@@ -76,7 +77,9 @@ class _WaitRoomState extends State<WaitRoom> {
   void subscribeToRoomMemberUpdate() {
     final realtime = Realtime(client);
 
-    realtimeRoomMembersSubscription = realtime.subscribe(['documents']);
+    realtimeRoomMembersSubscription = realtime.subscribe([
+      "databases.$appDatabase.collections.$matchmakingCollection.documents'"
+    ]);
 
     // Listen to changes
     realtimeRoomMembersSubscription!.stream.listen((data) {
