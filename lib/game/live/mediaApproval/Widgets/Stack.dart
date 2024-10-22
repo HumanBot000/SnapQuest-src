@@ -154,6 +154,7 @@ class _CheckingStackState extends State<CheckingStack> {
                               child: CardLabel.left(),
                             );
                           } else {
+                            //I don't know, this was weirdly happening sometimes while testing it
                             logger.wtf(
                                 "Wrong direction: ${properties.direction}");
                             return const SizedBox.shrink();
