@@ -115,7 +115,7 @@ class _CaptureMediaState extends State<CaptureMedia>
                 value: _animationController.value,
                 strokeWidth: 6,
                 backgroundColor: Colors.grey,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
               ),
             ),
             // Record/Stop Button

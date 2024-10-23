@@ -10,6 +10,7 @@ import '../../../../animations/GradientText.dart';
 import '../../../../main.dart';
 import '../../../../userAuth/auth_service.dart';
 import '../../Widgets/Timer.dart';
+import '../management/removeMedia.dart';
 
 class CheckingStack extends StatefulWidget {
   final Duration timeRemaining;
@@ -49,8 +50,14 @@ class _CheckingStackState extends State<CheckingStack> {
 
   Future<void> _updateMediaToValidate() async {
     mediaToValidate = await getMedia(widget.roomID);
+    List<Uri> mediaNotSeenBefore = [];
+    for (var medium in mediaToValidate) {
+      if (!mediaSeenBefore.contains(medium)) {
+        mediaNotSeenBefore.add(medium);
+      }
+    }
     setState(() {
-      mediaToValidate = mediaToValidate;
+      mediaToValidate = mediaNotSeenBefore;
     });
   }
 
@@ -133,7 +140,7 @@ class _CheckingStackState extends State<CheckingStack> {
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: mediaToValidate.length > mediaSeenBefore.length
+                child: mediaToValidate.isNotEmpty
                     ? SwipableStack(
                         allowVerticalSwipe: false,
                         overlayBuilder: (context, properties) {
@@ -144,6 +151,7 @@ class _CheckingStackState extends State<CheckingStack> {
                               properties.direction == SwipeDirection.left;
                           logger.v(properties.direction);
                           if (isRight) {
+                            //todo this only works on first swipe
                             return Opacity(
                               opacity: isRight ? opacity : 0,
                               child: CardLabel.right(),
@@ -163,6 +171,7 @@ class _CheckingStackState extends State<CheckingStack> {
                         builder: (context, properties) {
                           //properties.index seems to increment itself on update?? That's not reliable
                           return Align(
+                            key: UniqueKey(),
                             alignment: Alignment.center,
                             child: Card(
                               elevation: 6.0,
@@ -181,8 +190,7 @@ class _CheckingStackState extends State<CheckingStack> {
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: NetworkImage(
-                                            mediaToValidate[cardIndex]
-                                                .toString()),
+                                            mediaToValidate[0].toString()),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -205,7 +213,64 @@ class _CheckingStackState extends State<CheckingStack> {
                             ),
                           );
                         },
-                        onSwipeCompleted: (swipeIndex, direction) {},
+                        onSwipeCompleted: (swipeIndex, direction) async {
+                          mediaSeenBefore.add(mediaToValidate[0]);
+                          await _updateMediaToValidate();
+                          setState(() {
+                            cardIndex += 1;
+                          });
+                          if (direction == SwipeDirection.left) {
+                            logger.i("disapproved medium");
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                      "Do you really want to disaproved this asset?",
+                                    ),
+                                    content: const Text(
+                                      "Do you think this image doesn't fulfil the challenge?",
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          disapproveAsset(
+                                              widget.user, mediaToValidate[0]);
+                                        },
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.flag,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                            const Text(
+                                              "Disapprove Asset",
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Row(
+                                          children: [
+                                            Icon(
+                                              Icons.check,
+                                              color: Colors.green,
+                                            ),
+                                            Text("Approve Asset"),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
+                        },
                       )
                     : const Text(
                         "You have rated all assets for this game. Wait until new assets are uploaded, wait till the timer runs out or wait till everyone has uploaded one asset"),

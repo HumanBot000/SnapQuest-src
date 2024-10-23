@@ -103,7 +103,7 @@ class _ConfirmVideoState extends State<ConfirmVideo> {
                 Positioned(
                   top: MediaQuery.of(context).size.height * 0.1,
                   child: Container(
-                    margin: EdgeInsets.all(32),
+                    margin: const EdgeInsets.all(32),
                     child: CountdownTimer(
                       initialDuration: widget.timeRemaining,
                     ),
