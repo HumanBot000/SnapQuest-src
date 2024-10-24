@@ -67,6 +67,7 @@ class _CheckingStackState extends State<CheckingStack> {
         ['databases.$appDatabase.collections.$roomMediaCollection.documents']);
     // Listen to changes
     realtimeMediaValidationSubscription?.stream.listen((event) {
+      print("object");
       final payload = event.payload;
       if (!event.events.first.endsWith("create") ||
           payload['room_id'] != widget.roomID) {
@@ -214,29 +215,30 @@ class _CheckingStackState extends State<CheckingStack> {
                           );
                         },
                         onSwipeCompleted: (swipeIndex, direction) async {
-                          mediaSeenBefore.add(mediaToValidate[0]);
-                          await _updateMediaToValidate();
-                          setState(() {
-                            cardIndex += 1;
-                          });
                           if (direction == SwipeDirection.left) {
-                            logger.i("disapproved medium");
                             showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
                                     title: const Text(
-                                      "Do you really want to disaproved this asset?",
+                                      "Do you really want to disapproved this asset?",
                                     ),
                                     content: const Text(
                                       "Do you think this image doesn't fulfil the challenge?",
                                     ),
                                     actions: [
                                       TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
+                                        onPressed: () async {
                                           disapproveAsset(
                                               widget.user, mediaToValidate[0]);
+                                          logger.i("disapproved medium");
+                                          Navigator.pop(context);
+                                          mediaSeenBefore
+                                              .add(mediaToValidate[0]);
+                                          await _updateMediaToValidate();
+                                          setState(() {
+                                            cardIndex += 1;
+                                          });
                                         },
                                         child: Row(
                                           children: [
@@ -253,7 +255,13 @@ class _CheckingStackState extends State<CheckingStack> {
                                         ),
                                       ),
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          mediaSeenBefore
+                                              .add(mediaToValidate[0]);
+                                          await _updateMediaToValidate();
+                                          setState(() {
+                                            cardIndex += 1;
+                                          });
                                           Navigator.pop(context);
                                         },
                                         child: const Row(
