@@ -2,22 +2,23 @@ import 'dart:math';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
-import 'package:appwrite_hackathon_2024/enums/appwrite.dart';
 import 'package:appwrite_hackathon_2024/game/live/mediaApproval/management/getMedia.dart';
 import 'package:flutter/material.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 import '../../../../animations/GradientText.dart';
+import '../../../../enums/appwrite.dart';
 import '../../../../main.dart';
 import '../../../../userAuth/auth_service.dart';
 import '../../Widgets/Timer.dart';
 import '../management/removeMedia.dart';
+import 'package:http/http.dart' as http;
+import 'package:video_player/video_player.dart';
 
 class CheckingStack extends StatefulWidget {
   final Duration timeRemaining;
   final Challenge challenge;
   final User user;
   final int roomID;
-
   const CheckingStack(
       {super.key,
       required this.timeRemaining,
@@ -29,11 +30,14 @@ class CheckingStack extends StatefulWidget {
   State<CheckingStack> createState() => _CheckingStackState();
 }
 
+// Inside your _CheckingStackState class
 class _CheckingStackState extends State<CheckingStack> {
   List<Uri> mediaSeenBefore = [];
   List<Uri> mediaToValidate = [];
   int cardIndex = 0;
   RealtimeSubscription? realtimeMediaValidationSubscription;
+  VideoPlayerController? _videoController;
+  bool _isVideo = false;
 
   @override
   void initState() {
@@ -46,6 +50,7 @@ class _CheckingStackState extends State<CheckingStack> {
   void dispose() {
     super.dispose();
     realtimeMediaValidationSubscription?.close();
+    _videoController?.dispose(); // Dispose video controller
   }
 
   Future<void> _updateMediaToValidate() async {
@@ -59,6 +64,19 @@ class _CheckingStackState extends State<CheckingStack> {
     setState(() {
       mediaToValidate = mediaNotSeenBefore;
     });
+
+    // Initialize video or image for the first media
+    if (mediaToValidate.isNotEmpty) {
+      _isVideo = await _assetIsVideo(mediaToValidate[0]);
+      if (_isVideo) {
+        _videoController =
+            VideoPlayerController.network(mediaToValidate[0].toString())
+              ..initialize().then((_) {
+                setState(() {});
+                _videoController?.play();
+              });
+      }
+    }
   }
 
   void _subscribeToSubmittedMediaAppend() {
@@ -75,6 +93,19 @@ class _CheckingStackState extends State<CheckingStack> {
       }
       _updateMediaToValidate();
     });
+  }
+
+  Future<bool> _assetIsVideo(Uri uri) async {
+    try {
+      final response = await http.head(uri);
+      if (response.headers.containsKey('content-type')) {
+        final contentType = response.headers['content-type'] ?? '';
+        return contentType.startsWith('video/');
+      }
+    } catch (e) {
+      logger.e("Error occurred while fetching headers: $e");
+    }
+    return false;
   }
 
   @override
@@ -152,7 +183,6 @@ class _CheckingStackState extends State<CheckingStack> {
                               properties.direction == SwipeDirection.left;
                           logger.v(properties.direction);
                           if (isRight) {
-                            //todo this only works on first swipe
                             return Opacity(
                               opacity: isRight ? opacity : 0,
                               child: CardLabel.right(),
@@ -163,14 +193,13 @@ class _CheckingStackState extends State<CheckingStack> {
                               child: CardLabel.left(),
                             );
                           } else {
-                            //I don't know, this was weirdly happening sometimes while testing it
                             logger.wtf(
                                 "Wrong direction: ${properties.direction}");
                             return const SizedBox.shrink();
                           }
                         },
                         builder: (context, properties) {
-                          //properties.index seems to increment itself on update?? That's not reliable
+                          //todo bottomoverflow for videos
                           return Align(
                             key: UniqueKey(),
                             alignment: Alignment.center,
@@ -184,18 +213,30 @@ class _CheckingStackState extends State<CheckingStack> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Asset Image
-                                  Container(
-                                    height: 250,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            mediaToValidate[0].toString()),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
+                                  // Display video if asset is a video, otherwise image
+                                  _isVideo
+                                      ? (_videoController != null &&
+                                              _videoController!
+                                                  .value.isInitialized)
+                                          ? AspectRatio(
+                                              aspectRatio: _videoController!
+                                                  .value.aspectRatio,
+                                              child: VideoPlayer(
+                                                  _videoController!),
+                                            )
+                                          : const CircularProgressIndicator()
+                                      : Container(
+                                          height: 250,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                  mediaToValidate[0]
+                                                      .toString()),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Text(
@@ -221,10 +262,10 @@ class _CheckingStackState extends State<CheckingStack> {
                                 builder: (context) {
                                   return AlertDialog(
                                     title: const Text(
-                                      "Do you really want to disapproved this asset?",
+                                      "Do you really want to disapprove this asset?",
                                     ),
                                     content: const Text(
-                                      "Do you think this image doesn't fulfil the challenge?",
+                                      "Do you think this image doesn't fulfill the challenge?",
                                     ),
                                     actions: [
                                       TextButton(
@@ -277,11 +318,17 @@ class _CheckingStackState extends State<CheckingStack> {
                                     ],
                                   );
                                 });
+                          } else {
+                            mediaSeenBefore.add(mediaToValidate[0]);
+                            await _updateMediaToValidate();
+                            setState(() {
+                              cardIndex += 1;
+                            });
                           }
                         },
                       )
                     : const Text(
-                        "You have rated all assets for this game. Wait until new assets are uploaded, wait till the timer runs out or wait till everyone has uploaded one asset"),
+                        "You have rated all assets for this game. Wait until new assets are uploaded, wait till the timer runs out or wait till everyone has uploaded one asset."),
               ),
             ),
           ),

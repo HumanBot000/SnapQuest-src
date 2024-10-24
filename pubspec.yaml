@@ -39,6 +39,7 @@ dependencies:
   camera: ^0.9.4+5
   video_player: ^2.2.6
   swipable_stack: ^2.0.0
+  http: ^0.13.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
