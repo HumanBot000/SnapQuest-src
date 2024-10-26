@@ -26,7 +26,7 @@ class _RunningGameState extends State<RunningGame> {
   late CameraController controller;
   late List<CameraDescription> cameras;
   bool isCameraInitialized = false;
-  final Duration _timeRemaining = const Duration(minutes: 1);
+  final Duration _timeRemaining = const Duration(seconds: 20);
   bool takePicture = true;
   bool micEnabled = true;
 
@@ -115,6 +115,8 @@ class _RunningGameState extends State<RunningGame> {
         children: [
           CountdownTimer(
             initialDuration: _timeRemaining,
+            user: widget.user,
+            roomID: widget.roomID,
           ),
           const Text(
               "Take a picture or video of this challenge. You have max. 1 minute time. Whoever finishes first, wins!",

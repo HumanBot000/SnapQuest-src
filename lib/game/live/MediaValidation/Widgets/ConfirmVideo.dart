@@ -106,6 +106,8 @@ class _ConfirmVideoState extends State<ConfirmVideo> {
                     margin: const EdgeInsets.all(32),
                     child: CountdownTimer(
                       initialDuration: widget.timeRemaining,
+                      user: widget.user,
+                      roomID: widget.roomID,
                     ),
                   ),
                 ),

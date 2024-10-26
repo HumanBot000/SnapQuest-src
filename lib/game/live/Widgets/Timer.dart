@@ -1,13 +1,21 @@
 import 'dart:async';
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../animations/GradientText.dart';
+import '../../../main.dart';
+import '../../final/Widgets/Results.dart';
 
 class CountdownTimer extends StatefulWidget {
   final Duration initialDuration;
-
-  const CountdownTimer({super.key, required this.initialDuration});
+  final User user;
+  final int roomID;
+  const CountdownTimer(
+      {super.key,
+      required this.initialDuration,
+      required this.user,
+      required this.roomID});
 
   @override
   _CountdownTimerState createState() => _CountdownTimerState();
@@ -73,7 +81,15 @@ class _CountdownTimerState extends State<CountdownTimer> {
   Widget build(BuildContext context) {
     String minutes = (_secondsRemaining ~/ 60).toString().padLeft(2, '0');
     String seconds = (_secondsRemaining % 60).toString().padLeft(2, '0');
-
+    if (_secondsRemaining == 0) {
+      logger.i("time is up->moving to results");
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
+          return Results(user: widget.user, roomID: widget.roomID);
+        }));
+      });
+    }
     return GradientText('$minutes:$seconds',
         style: const TextStyle(fontSize: 48),
         gradient: LinearGradient(colors: [

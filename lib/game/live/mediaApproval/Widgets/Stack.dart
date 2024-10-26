@@ -9,9 +9,9 @@ import '../../../../animations/GradientText.dart';
 import '../../../../enums/appwrite.dart';
 import '../../../../main.dart';
 import '../../../../userAuth/auth_service.dart';
+import '../../../../util/Files.dart';
 import '../../Widgets/Timer.dart';
 import '../management/removeMedia.dart';
-import 'package:http/http.dart' as http;
 import 'package:video_player/video_player.dart';
 
 class CheckingStack extends StatefulWidget {
@@ -67,14 +67,13 @@ class _CheckingStackState extends State<CheckingStack> {
 
     // Initialize video or image for the first media
     if (mediaToValidate.isNotEmpty) {
-      _isVideo = await _assetIsVideo(mediaToValidate[0]);
+      _isVideo = await assetIsVideo(mediaToValidate[0]);
       if (_isVideo) {
-        _videoController =
-            VideoPlayerController.network(mediaToValidate[0].toString())
-              ..initialize().then((_) {
-                setState(() {});
-                _videoController?.play();
-              });
+        _videoController = VideoPlayerController.networkUrl(mediaToValidate[0])
+          ..initialize().then((_) {
+            setState(() {});
+            _videoController?.play();
+          });
       }
     }
   }
@@ -93,19 +92,6 @@ class _CheckingStackState extends State<CheckingStack> {
       }
       _updateMediaToValidate();
     });
-  }
-
-  Future<bool> _assetIsVideo(Uri uri) async {
-    try {
-      final response = await http.head(uri);
-      if (response.headers.containsKey('content-type')) {
-        final contentType = response.headers['content-type'] ?? '';
-        return contentType.startsWith('video/');
-      }
-    } catch (e) {
-      logger.e("Error occurred while fetching headers: $e");
-    }
-    return false;
   }
 
   @override
@@ -154,6 +140,8 @@ class _CheckingStackState extends State<CheckingStack> {
         children: [
           const SizedBox(height: 16),
           CountdownTimer(
+            user: widget.user,
+            roomID: widget.roomID,
             initialDuration: widget.timeRemaining,
           ),
           const Padding(

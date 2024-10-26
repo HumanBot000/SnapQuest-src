@@ -71,6 +71,8 @@ class _ConfirmImageState extends State<ConfirmImage> {
             children: [
               CountdownTimer(
                 initialDuration: widget.timeRemaining,
+                roomID: widget.roomID,
+                user: widget.user,
               ),
               Stack(
                 alignment: Alignment.bottomCenter,

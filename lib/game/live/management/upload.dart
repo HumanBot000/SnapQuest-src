@@ -23,7 +23,6 @@ Future<void> insertFileToDB(String imageURL, User user, int roomId) async {
       documentId: ID.unique(),
       data: {
         'media_url': imageURL,
-        'uploaded_at': DateTime.now().toString(),
         'user_email': user.email,
         'room_id': roomId
       });
