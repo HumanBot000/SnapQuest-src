@@ -84,10 +84,12 @@ class _CountdownTimerState extends State<CountdownTimer> {
     if (_secondsRemaining == 0) {
       logger.i("time is up->moving to results");
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) {
-          return Results(user: widget.user, roomID: widget.roomID);
-        }));
+        //Don't know why I have to do this, but somehow flutter is always  giving ab back arrow in the appbar as leading, even though I didn't specified this
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (context) =>
+                    Results(user: widget.user, roomID: widget.roomID)),
+            (Route route) => false);
       });
     }
     return GradientText('$minutes:$seconds',

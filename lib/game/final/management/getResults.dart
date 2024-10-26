@@ -12,6 +12,7 @@ Future<List<Submission>> getResults(int roomID) async {
     submissions.add(Submission(e.$id, Uri.parse(e.data['media_url']),
         DateTime.parse(e.$createdAt), roomID));
   });
+  print(await _sortSubmissionsByTime(submissions));
   return await _sortSubmissionsByTime(submissions);
 }
 
@@ -19,5 +20,5 @@ Future<List<Submission>> _sortSubmissionsByTime(
     List<Submission> unsortedSubmissions) async {
   unsortedSubmissions
       .sort((a, b) => b.submissionTime.compareTo(a.submissionTime));
-  return unsortedSubmissions;
+  return unsortedSubmissions.reversed.toList();
 }
