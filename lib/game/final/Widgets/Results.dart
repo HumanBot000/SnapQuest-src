@@ -1,8 +1,10 @@
 import 'package:appwrite/models.dart';
+import 'package:appwrite_hackathon_2024/game/final/Widgets/TableView.dart';
 import 'package:appwrite_hackathon_2024/game/final/management/getResults.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../classes/Submission.dart';
+import '../../../main.dart';
 import '../../../util/DBLockup.dart';
 import '../../../util/Files.dart';
 
@@ -137,157 +139,198 @@ class _ResultsState extends State<Results> {
               ? const Center(child: Text("No results available"))
               : RefreshIndicator(
                   onRefresh: () async => _populateSubmissions(),
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: submissions.length,
-                    itemBuilder: (context, index) {
-                      final submission = submissions[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: [
-                              FutureBuilder<bool>(
-                                future: assetIsVideo(submission.mediaURL),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Container(
-                                      height: 200,
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    );
-                                  }
-                                  if (snapshot.hasData &&
-                                      snapshot.data == true) {
-                                    _initializeVideoController(
-                                        index, submission.mediaURL);
-                                    return ValueListenableBuilder<bool>(
-                                      valueListenable:
-                                          _isVideoPlaying[index] != null
-                                              ? _isVideoPlaying[index]!
-                                              : ValueNotifier(false),
-                                      builder: (context, isPlaying, child) {
-                                        return GestureDetector(
-                                          onTap: () => _togglePlayPause(index),
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                child: AspectRatio(
-                                                  aspectRatio:
-                                                      _videoControllers[index]
-                                                              ?.value
-                                                              .aspectRatio ??
-                                                          16 / 9,
-                                                  child: VideoPlayer(
-                                                      _videoControllers[
-                                                          index]!),
-                                                ),
-                                              ),
-                                              Icon(
-                                                isPlaying
-                                                    ? Icons.pause_circle_filled
-                                                    : Icons.play_circle_fill,
-                                                color: Colors.white70,
-                                                size: 64,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.network(
-                                      submission.mediaURL.toString(),
-                                      fit: BoxFit.cover,
-                                      height: 200,
-                                      width: double.infinity,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Center(
-                                            child: CircularProgressIndicator());
-                                      },
-                                    ),
-                                  );
-                                },
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      ListView.builder(
+                        controller: _scrollController,
+                        itemCount: submissions.length,
+                        itemBuilder: (context, index) {
+                          final submission = submissions[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    FutureBuilder<String>(
-                                      future: submissionToUsername(
-                                          submission.documentID),
-                                      builder: (context, snapshot) {
-                                        String initials = snapshot.hasData
-                                            ? snapshot.data![0].toUpperCase()
-                                            : "?";
-                                        return CircleAvatar(
-                                          radius: 20,
-                                          backgroundColor: Colors.blue,
-                                          child: Text(
-                                            initials,
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                              child: Column(
+                                children: [
+                                  FutureBuilder<bool>(
+                                    future: assetIsVideo(submission.mediaURL),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Container(
+                                          height: 200,
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()),
                                         );
-                                      },
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Row(
+                                      }
+                                      if (snapshot.hasData &&
+                                          snapshot.data == true) {
+                                        _initializeVideoController(
+                                            index, submission.mediaURL);
+                                        return ValueListenableBuilder<bool>(
+                                          valueListenable:
+                                              _isVideoPlaying[index] != null
+                                                  ? _isVideoPlaying[index]!
+                                                  : ValueNotifier(false),
+                                          builder: (context, isPlaying, child) {
+                                            return GestureDetector(
+                                              onTap: () =>
+                                                  _togglePlayPause(index),
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    child: AspectRatio(
+                                                      aspectRatio:
+                                                          _videoControllers[
+                                                                      index]
+                                                                  ?.value
+                                                                  .aspectRatio ??
+                                                              16 / 9,
+                                                      child: VideoPlayer(
+                                                          _videoControllers[
+                                                              index]!),
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    isPlaying
+                                                        ? Icons
+                                                            .pause_circle_filled
+                                                        : Icons
+                                                            .play_circle_fill,
+                                                    color: Colors.white70,
+                                                    size: 64,
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          submission.mediaURL.toString(),
+                                          fit: BoxFit.cover,
+                                          height: 200,
+                                          width: double.infinity,
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
                                       children: [
                                         FutureBuilder<String>(
                                           future: submissionToUsername(
                                               submission.documentID),
                                           builder: (context, snapshot) {
-                                            return Text(
-                                              snapshot.data ?? "Unknown User",
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500),
+                                            String initials = snapshot.hasData
+                                                ? snapshot.data![0]
+                                                    .toUpperCase()
+                                                : "?";
+                                            return CircleAvatar(
+                                              radius: 20,
+                                              backgroundColor: Colors.blue,
+                                              child: Text(
+                                                initials,
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
                                             );
                                           },
                                         ),
-                                        index == 0
-                                            ? Icon(
-                                                Icons.emoji_events,
-                                                color: Color(0xffFFD700),
-                                              )
-                                            : index == 1
+                                        const SizedBox(width: 12),
+                                        Row(
+                                          children: [
+                                            FutureBuilder<String>(
+                                              future: submissionToUsername(
+                                                  submission.documentID),
+                                              builder: (context, snapshot) {
+                                                return Text(
+                                                  snapshot.data ??
+                                                      "Unknown User",
+                                                  style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                );
+                                              },
+                                            ),
+                                            index == 0
                                                 ? Icon(
                                                     Icons.emoji_events,
-                                                    color: Color(0xffC0C0C0),
+                                                    color: Color(0xffFFD700),
                                                   )
-                                                : index == 2
+                                                : index == 1
                                                     ? Icon(
                                                         Icons.emoji_events,
                                                         color:
-                                                            Color(0xffCD7F32),
+                                                            Color(0xffC0C0C0),
                                                       )
-                                                    : Container(),
+                                                    : index == 2
+                                                        ? Icon(
+                                                            Icons.emoji_events,
+                                                            color: Color(
+                                                                0xffCD7F32),
+                                                          )
+                                                        : Container(),
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  Divider(),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      ElevatedButton(
+                          onPressed: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ResultsTable(roomID: widget.roomID),
+                              )),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text("Continue",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium),
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Colors.greenAccent,
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    },
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                                Theme.of(context).colorScheme.primary),
+                          ))
+                    ],
                   ),
                 ),
     );
