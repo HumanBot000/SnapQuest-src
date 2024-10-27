@@ -8,7 +8,6 @@ import '../../../enums/gameConfig.dart';
 
 Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
   int currentCheckingRoom = 1;
-
   while (true) {
     try {
       final response = await databases.listDocuments(
@@ -22,11 +21,19 @@ Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
         currentCheckingRoom++;
         continue;
       }
-      logger.w(response.total);
       if (response.total == 0) {
         return currentCheckingRoom;
       }
       if (await roomIsOutdoor(currentCheckingRoom) == isOutdoor) {
+        if (response.documents.first.data["is_locked"] ||
+            response.documents.first.data["is_locked"]
+                    .toString()
+                    .toLowerCase() ==
+                "true") {
+          //Not sure what appwrite actually returns
+          currentCheckingRoom++;
+          continue;
+        }
         return currentCheckingRoom;
       }
       currentCheckingRoom++;

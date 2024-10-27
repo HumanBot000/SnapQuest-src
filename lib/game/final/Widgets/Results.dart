@@ -311,8 +311,10 @@ class _ResultsState extends State<Results> {
                           onPressed: () => Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    ResultsTable(roomID: widget.roomID),
+                                builder: (context) => ResultsTable(
+                                  roomID: widget.roomID,
+                                  user: widget.user,
+                                ),
                               )),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,

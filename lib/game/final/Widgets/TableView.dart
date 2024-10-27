@@ -1,11 +1,15 @@
+import 'package:appwrite/models.dart';
+import 'package:appwrite_hackathon_2024/enums/gameConfig.dart';
+import 'package:appwrite_hackathon_2024/game/home.dart';
 import 'package:flutter/material.dart';
+import '../management/clean.dart';
 import '../management/getResults.dart';
 import 'package:intl/intl.dart';
 
 class ResultsTable extends StatefulWidget {
   final int roomID;
-
-  const ResultsTable({super.key, required this.roomID});
+  final User user;
+  const ResultsTable({super.key, required this.roomID, required this.user});
 
   @override
   State<ResultsTable> createState() => _ResultsTableState();
@@ -135,10 +139,38 @@ class _ResultsTableState extends State<ResultsTable> {
           ),
         ),
       ),
-      body: Table(
-          border: TableBorder.all(
-              color: Theme.of(context).colorScheme.primary, width: 2),
-          children: _getTableRows()),
+      body: ListView(
+        children: [
+          Table(
+              border: TableBorder.all(
+                  color: Theme.of(context).colorScheme.primary, width: 2),
+              children: _getTableRows()),
+          ElevatedButton(
+              onPressed: () {
+                scheduleRoomForDeletion(widget.roomID);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Home(user: widget.user),
+                    ));
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text("Back to Home",
+                      style: Theme.of(context).textTheme.titleMedium),
+                  Icon(
+                    Icons.door_front_door,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.secondary),
+              ))
+        ],
+      ),
     );
   }
 }

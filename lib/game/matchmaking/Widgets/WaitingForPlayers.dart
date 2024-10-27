@@ -10,6 +10,7 @@ import '../../../userAuth/auth_service.dart';
 import '../../challengeChooser/Widgets/ChallengeChooser.dart';
 
 import '../../challengeChooser/Widgets/management/getChallenges.dart';
+import '../../final/management/clean.dart';
 import '../../home.dart';
 import '../../../enums/gameConfig.dart';
 import '../management/matchmaking.dart';
@@ -78,7 +79,7 @@ class _WaitRoomState extends State<WaitRoom> {
     final realtime = Realtime(client);
 
     realtimeRoomMembersSubscription = realtime.subscribe([
-      "databases.$appDatabase.collections.$matchmakingCollection.documents"
+      "databases.$appDatabase.collections.$matchmakingCollection.documents" //todo
     ]);
 
     // Listen to changes
@@ -100,6 +101,7 @@ class _WaitRoomState extends State<WaitRoom> {
         }
         if (!isNavigatingAfterFullRoom &&
             playerNames.length >= maxPlayersPerRoom) {
+          lockRoom(widget.roomID);
           isNavigatingAfterFullRoom = true;
           roomIsOutdoor(widget.roomID).then((isOutdoor) {
             return getChallenges(isOutdoor: isOutdoor);
@@ -263,6 +265,7 @@ class _WaitRoomState extends State<WaitRoom> {
                         );
                       } else if (outdoorSnapshot.hasData) {
                         logger.i("Room is Outdoor: ${outdoorSnapshot.data}");
+                        lockRoom(widget.roomID);
                         return FutureBuilder<List<Challenge>>(
                           future:
                               getChallenges(isOutdoor: outdoorSnapshot.data!),

@@ -261,7 +261,9 @@ class _CheckingStackState extends State<CheckingStack> {
                                       TextButton(
                                         onPressed: () async {
                                           disapproveAsset(
-                                              widget.user, mediaToValidate[0]);
+                                              widget.user,
+                                              mediaToValidate[0],
+                                              widget.roomID);
                                           logger.i("disapproved medium");
                                           Navigator.pop(context);
                                           mediaSeenBefore

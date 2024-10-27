@@ -1,12 +1,10 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-
 import '../../../../enums/appwrite.dart';
 import '../../../../enums/gameConfig.dart';
-import '../../../../main.dart';
-import '../../management/upload.dart';
+import '../../../final/management/clean.dart';
 
-Future<void> disapproveAsset(User user, Uri asset) async {
+Future<void> disapproveAsset(User user, Uri asset, int roomID) async {
   await databases.createDocument(
     databaseId: appDatabase,
     collectionId: disapprovedMediaCollection,
@@ -14,6 +12,7 @@ Future<void> disapproveAsset(User user, Uri asset) async {
     data: {
       'reporter_email': user.email,
       'reported_medium': asset.toString(),
+      'room_id': roomID
     },
   );
   if (await _countDisapprovalsForAsset(asset) >= assetDisapprovalThreshold) {
@@ -35,7 +34,6 @@ Future<void> cleanUpDisapprovals(Uri asset) async {
       collectionId: disapprovedMediaCollection,
       queries: [Query.equal("reported_medium", asset.toString())]);
   for (var document in response.documents) {
-    //todo Also clean this up after the game
     await databases.deleteDocument(
         databaseId: appDatabase,
         collectionId: disapprovedMediaCollection,
@@ -50,6 +48,5 @@ Future<void> cleanUpDisapprovals(Uri asset) async {
       databaseId: appDatabase,
       collectionId: roomMediaCollection,
       documentId: response2.documents[0].$id);
-  await storage.deleteFile(
-      bucketId: gameMediaBucket, fileId: asset.pathSegments[5]);
+  await deleteBucketFile(asset);
 }
