@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Race against friends in SnapQuest, where challenges meet competition! Snap your way to victory by completing real-world photo tasks faster than your friends, whether indoors or outdoors. Each challenge is a race to capture, share, and conquer. Who will complete the quest first? Get ready for an adventure where every snap counts!",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
