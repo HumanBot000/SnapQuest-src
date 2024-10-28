@@ -136,7 +136,36 @@ class _ResultsState extends State<Results> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : submissions.isEmpty
-              ? const Center(child: Text("No results available"))
+              ? Column(
+                  children: [
+                    Text("No one has submitted anything ):",
+                        style: Theme.of(context).textTheme.titleMedium),
+                    ElevatedButton(
+                        onPressed: () => Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ResultsTable(
+                                roomID: widget.roomID,
+                                user: widget.user,
+                              ),
+                            )),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text("Continue",
+                                style: Theme.of(context).textTheme.titleMedium),
+                            Icon(
+                              Icons.arrow_forward,
+                              color: Colors.greenAccent,
+                            ),
+                          ],
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.primary),
+                        ))
+                  ],
+                )
               : RefreshIndicator(
                   onRefresh: () async => _populateSubmissions(),
                   child: Stack(

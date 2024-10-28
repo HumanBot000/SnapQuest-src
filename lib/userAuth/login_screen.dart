@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: WrapAlignment.center,
               children: [
                 Text(
-                  "Name follows later",
+                  "SnapQuest",
                   softWrap: true,
                   overflow: TextOverflow.visible,
                 )
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Welcome to NFL!",
+              "Welcome to SnapQuest!",
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             Text(

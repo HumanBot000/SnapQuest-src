@@ -211,7 +211,6 @@ class _CheckingStackState extends State<CheckingStack> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Display video if asset is a video, otherwise image
                                   _isVideo
                                       ? (_videoController != null &&
                                               _videoController!
