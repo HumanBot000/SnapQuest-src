@@ -26,25 +26,24 @@ Future<void> lockRoom(int roomID) async {
 }
 
 Future<void> scheduleRoomForDeletion(int roomID) async {
-  //Rooms are deleted at 03:00 in the night by an appwrite function
   final response = await databases.listDocuments(
       databaseId: appDatabase,
       collectionId: matchmakingCollection,
       queries: [
         Query.equal('room_id', roomID),
+        Query.equal('is_finished', false),
       ]);
   for (var data in response.documents) {
     await databases.updateDocument(
         databaseId: appDatabase,
         collectionId: matchmakingCollection,
         documentId: data.$id,
-        data: {'is_finished': true});
+        data: {'is_finished': true, "finished_at": DateTime.now().toString()});
   }
 }
 
 Future<void> deleteGameData(int roomID) async {
   //This function might get a bit long, but it's Single Responsibility and these processes probably ever won't run on themselves
-  //UPDATE: This function is deprecated but might come in helpful for further development
   final reportedAssets = await databases.listDocuments(
       databaseId: appDatabase,
       collectionId: disapprovedMediaCollection,

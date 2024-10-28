@@ -2,7 +2,9 @@ import 'dart:math';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
+import 'package:appwrite_hackathon_2024/enums/gameConfig.dart';
 import 'package:appwrite_hackathon_2024/game/live/mediaApproval/management/getMedia.dart';
+import 'package:appwrite_hackathon_2024/util/DBLockup.dart';
 import 'package:flutter/material.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 import '../../../../animations/GradientText.dart';
@@ -10,6 +12,7 @@ import '../../../../enums/appwrite.dart';
 import '../../../../main.dart';
 import '../../../../userAuth/auth_service.dart';
 import '../../../../util/Files.dart';
+import '../../../final/Widgets/Results.dart';
 import '../../Widgets/Timer.dart';
 import '../management/removeMedia.dart';
 import 'package:video_player/video_player.dart';
@@ -34,8 +37,8 @@ class CheckingStack extends StatefulWidget {
 
 // Inside your _CheckingStackState class
 class _CheckingStackState extends State<CheckingStack> {
-  List<Uri> mediaSeenBefore = [];
-  List<Uri> mediaToValidate = [];
+  List<Uri> assetSeenBefore = [];
+  List<Uri> assetsToValidate = [];
   int cardIndex = 0;
   RealtimeSubscription? realtimeMediaValidationSubscription;
   VideoPlayerController? _videoController;
@@ -56,27 +59,33 @@ class _CheckingStackState extends State<CheckingStack> {
   }
 
   Future<void> _updateMediaToValidate() async {
-    mediaToValidate = await getMedia(widget.roomID);
-    List<Uri> mediaNotSeenBefore = [];
-    for (var medium in mediaToValidate) {
-      if (!mediaSeenBefore.contains(medium)) {
-        mediaNotSeenBefore.add(medium);
+    assetsToValidate = await getMedia(widget.roomID);
+    List<Uri> assetNotSeenBefore = [];
+    for (var medium in assetsToValidate) {
+      if (!assetSeenBefore.contains(medium)) {
+        assetNotSeenBefore.add(medium);
       }
     }
     setState(() {
-      mediaToValidate = mediaNotSeenBefore;
+      assetsToValidate = assetNotSeenBefore;
     });
-
-    // Initialize video or image for the first media
-    if (mediaToValidate.isNotEmpty) {
-      _isVideo = await assetIsVideo(mediaToValidate[0]);
+    if (assetsToValidate.isNotEmpty) {
+      _isVideo = await assetIsVideo(assetsToValidate[0]);
       if (_isVideo) {
-        _videoController = VideoPlayerController.networkUrl(mediaToValidate[0])
+        _videoController = VideoPlayerController.networkUrl(assetsToValidate[0])
           ..initialize().then((_) {
             setState(() {});
             _videoController?.play();
           });
       }
+    }
+    if (assetsToValidate.length == await userAmountInRoom(widget.roomID)) {
+      //All users have submitted their asset
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) =>
+                  Results(user: widget.user, roomID: widget.roomID)),
+          (Route route) => false);
     }
   }
 
@@ -86,7 +95,6 @@ class _CheckingStackState extends State<CheckingStack> {
         ['databases.$appDatabase.collections.$roomMediaCollection.documents']);
     // Listen to changes
     realtimeMediaValidationSubscription?.stream.listen((event) {
-      print("object");
       final payload = event.payload;
       if (!event.events.first.endsWith("create") ||
           payload['room_id'] != widget.roomID) {
@@ -162,7 +170,7 @@ class _CheckingStackState extends State<CheckingStack> {
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: mediaToValidate.isNotEmpty
+                child: assetsToValidate.isNotEmpty
                     ? SwipableStack(
                         allowVerticalSwipe: false,
                         overlayBuilder: (context, properties) {
@@ -221,7 +229,7 @@ class _CheckingStackState extends State<CheckingStack> {
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  mediaToValidate[0]
+                                                  assetsToValidate[0]
                                                       .toString()),
                                               fit: BoxFit.cover,
                                             ),
@@ -262,12 +270,12 @@ class _CheckingStackState extends State<CheckingStack> {
                                         onPressed: () async {
                                           disapproveAsset(
                                               widget.user,
-                                              mediaToValidate[0],
+                                              assetsToValidate[0],
                                               widget.roomID);
                                           logger.i("disapproved medium");
                                           Navigator.pop(context);
-                                          mediaSeenBefore
-                                              .add(mediaToValidate[0]);
+                                          assetSeenBefore
+                                              .add(assetsToValidate[0]);
                                           await _updateMediaToValidate();
                                           setState(() {
                                             cardIndex += 1;
@@ -289,8 +297,8 @@ class _CheckingStackState extends State<CheckingStack> {
                                       ),
                                       TextButton(
                                         onPressed: () async {
-                                          mediaSeenBefore
-                                              .add(mediaToValidate[0]);
+                                          assetSeenBefore
+                                              .add(assetsToValidate[0]);
                                           await _updateMediaToValidate();
                                           setState(() {
                                             cardIndex += 1;
@@ -311,7 +319,7 @@ class _CheckingStackState extends State<CheckingStack> {
                                   );
                                 });
                           } else {
-                            mediaSeenBefore.add(mediaToValidate[0]);
+                            assetSeenBefore.add(assetsToValidate[0]);
                             await _updateMediaToValidate();
                             setState(() {
                               cardIndex += 1;

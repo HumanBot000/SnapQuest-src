@@ -7,6 +7,8 @@ import 'package:appwrite_hackathon_2024/game/live/Widgets/Timer.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
+import '../../../enums/gameConfig.dart';
+
 class RunningGame extends StatefulWidget {
   final Challenge activeChallenge;
   final int roomID;
@@ -25,8 +27,8 @@ class RunningGame extends StatefulWidget {
 class _RunningGameState extends State<RunningGame> {
   late CameraController controller;
   late List<CameraDescription> cameras;
+  late Duration _timeRemaining;
   bool isCameraInitialized = false;
-  final Duration _timeRemaining = const Duration(seconds: 20);
   bool takePicture = true;
   bool micEnabled = true;
 
@@ -60,6 +62,8 @@ class _RunningGameState extends State<RunningGame> {
 
   @override
   void initState() {
+    _timeRemaining =
+        challengeTimeLimitsByDifficulty[widget.activeChallenge.difficulty - 1];
     super.initState();
     _loadCameras();
   }

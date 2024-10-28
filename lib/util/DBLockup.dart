@@ -15,3 +15,13 @@ Future<String> submissionToUsername(String submissionID) async {
       ]);
   return matchmakingLookup.documents.first.data['user_name'];
 }
+
+Future<int> userAmountInRoom(int roomID) async {
+  final matchmakingLookup = await databases.listDocuments(
+      databaseId: appDatabase,
+      collectionId: matchmakingCollection,
+      queries: [
+        Query.equal('room_id', roomID),
+      ]);
+  return matchmakingLookup.total;
+}

@@ -1,5 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
+import 'package:appwrite_hackathon_2024/game/final/management/clean.dart';
 import 'package:flutter/material.dart';
 import '../../../enums/appwrite.dart';
 import '../../../main.dart';
@@ -25,13 +26,17 @@ Future<int> _getOpenMatchmakingRoom({bool isOutdoor = true}) async {
         return currentCheckingRoom;
       }
       if (await roomIsOutdoor(currentCheckingRoom) == isOutdoor) {
-        if (response.documents.first.data["is_locked"] ||
-            response.documents.first.data["is_locked"]
-                    .toString()
-                    .toLowerCase() ==
-                "true") {
-          //Not sure what appwrite actually returns
-          currentCheckingRoom++;
+        if (response.documents.first.data["is_locked"]) {
+          if (DateTime.now()
+                  .difference(DateTime.parse(
+                      response.documents.first.data["finished_at"]))
+                  .inHours >=
+              gameDataDeletionThreshold.inHours) {
+            deleteGameData(currentCheckingRoom);
+            //Run again with the same "currentCheckingRoom"
+          } else {
+            currentCheckingRoom++;
+          }
           continue;
         }
         return currentCheckingRoom;

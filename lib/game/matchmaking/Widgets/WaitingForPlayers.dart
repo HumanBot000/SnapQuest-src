@@ -79,7 +79,7 @@ class _WaitRoomState extends State<WaitRoom> {
     final realtime = Realtime(client);
 
     realtimeRoomMembersSubscription = realtime.subscribe([
-      "databases.$appDatabase.collections.$matchmakingCollection.documents" //todo
+      "databases.$appDatabase.collections.$matchmakingCollection.documents"
     ]);
 
     // Listen to changes

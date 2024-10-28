@@ -26,6 +26,7 @@ class _ResultsTableState extends State<ResultsTable> {
 
   Future<void> _populateSubmissions() async {
     submissions = await getLinkedUsersToVideo(widget.roomID);
+    setState(() {});
   }
 
   List<TableRow> _getTableRows() {
@@ -104,7 +105,6 @@ class _ResultsTableState extends State<ResultsTable> {
 
   @override
   Widget build(BuildContext context) {
-    _populateSubmissions();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70.0),
