@@ -1,5 +1,5 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
+import 'package:SnapQuest/classes/Challenge.dart';
 import '../../../../enums/appwrite.dart';
 
 Future<List<Challenge>> getChallenges({bool isOutdoor = true}) async {

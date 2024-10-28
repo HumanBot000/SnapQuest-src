@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/game/final/management/clean.dart';
+import 'package:SnapQuest/game/final/management/clean.dart';
 import 'package:flutter/material.dart';
 import '../../../enums/appwrite.dart';
 import '../../../main.dart';

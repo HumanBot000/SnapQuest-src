@@ -3,7 +3,7 @@ import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../classes/Challenge.dart';
-import 'package:appwrite_hackathon_2024/animations/GradientText.dart';
+import 'package:SnapQuest/animations/GradientText.dart';
 
 class ChallengeDrawerAnimation extends StatefulWidget {
   final List<Challenge> challenges;

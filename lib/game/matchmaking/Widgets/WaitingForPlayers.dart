@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/main.dart';
+import 'package:SnapQuest/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../animations/Waiting.dart';

@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           padding: const EdgeInsets.only(left: 16),
                           child: Text(
-                            'Login with Discord',
+                            'Login via Discord',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.only(left: 16),
                       child: Text(
-                        'Login with GitHub',
+                        'Login via GitHub',
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onSecondary),
                       ),

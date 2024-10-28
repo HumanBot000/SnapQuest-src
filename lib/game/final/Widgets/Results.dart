@@ -1,6 +1,6 @@
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/game/final/Widgets/TableView.dart';
-import 'package:appwrite_hackathon_2024/game/final/management/getResults.dart';
+import 'package:SnapQuest/game/final/Widgets/TableView.dart';
+import 'package:SnapQuest/game/final/management/getResults.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../classes/Submission.dart';

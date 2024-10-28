@@ -25,8 +25,13 @@ class ConfirmationButtons extends StatefulWidget {
 }
 
 class _ConfirmationButtonsState extends State<ConfirmationButtons> {
+  bool _uploading = false;
   Future<void> _uploadMedia(
       XFile file, Duration timeRemaining, Challenge challenge) async {
+    if (_uploading) {
+      return;
+    }
+    _uploading = true;
     logger.i("Uploading File");
     try {
       String medium = await uploadFile(file.path, widget.user, widget.roomID);

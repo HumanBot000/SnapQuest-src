@@ -1,5 +1,5 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite_hackathon_2024/enums/appwrite.dart';
+import 'package:SnapQuest/enums/appwrite.dart';
 
 Future<String> submissionToUsername(String submissionID) async {
   final mediaLookup = await databases.getDocument(

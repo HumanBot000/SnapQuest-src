@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
-import 'package:appwrite_hackathon_2024/enums/gameConfig.dart';
-import 'package:appwrite_hackathon_2024/game/live/mediaApproval/management/getMedia.dart';
-import 'package:appwrite_hackathon_2024/util/DBLockup.dart';
+import 'package:SnapQuest/classes/Challenge.dart';
+import 'package:SnapQuest/enums/gameConfig.dart';
+import 'package:SnapQuest/game/live/mediaApproval/management/getMedia.dart';
+import 'package:SnapQuest/util/DBLockup.dart';
 import 'package:flutter/material.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 import '../../../../animations/GradientText.dart';
@@ -16,7 +16,6 @@ import '../../../final/Widgets/Results.dart';
 import '../../Widgets/Timer.dart';
 import '../management/removeMedia.dart';
 import 'package:video_player/video_player.dart';
-
 import 'SwipeableCardConfig.dart';
 
 class CheckingStack extends StatefulWidget {
@@ -35,7 +34,6 @@ class CheckingStack extends StatefulWidget {
   State<CheckingStack> createState() => _CheckingStackState();
 }
 
-// Inside your _CheckingStackState class
 class _CheckingStackState extends State<CheckingStack> {
   List<Uri> assetSeenBefore = [];
   List<Uri> assetsToValidate = [];
@@ -122,6 +120,7 @@ class _CheckingStackState extends State<CheckingStack> {
             ),
           ),
           child: AppBar(
+            leading: null, //todo removal doesn't work
             title: Center(
               child: GradientText(
                 "Do these Assets fulfill the given Challenge?",
@@ -197,7 +196,6 @@ class _CheckingStackState extends State<CheckingStack> {
                           }
                         },
                         builder: (context, properties) {
-                          //todo bottomoverflow for videos
                           return Align(
                             key: UniqueKey(),
                             alignment: Alignment.center,
@@ -215,9 +213,11 @@ class _CheckingStackState extends State<CheckingStack> {
                                       ? (_videoController != null &&
                                               _videoController!
                                                   .value.isInitialized)
-                                          ? AspectRatio(
-                                              aspectRatio: _videoController!
-                                                  .value.aspectRatio,
+                                          ? Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.3,
                                               child: VideoPlayer(
                                                   _videoController!),
                                             )

@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "io.github.HumanBot000.appwrite.hackathon.appwrite_hackathon_2024"
+    namespace = "io.github.HumanBot000.appwrite.hackathon.SnapQuest"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -34,7 +34,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.HumanBot000.appwrite.hackathon.appwrite_hackathon_2024"
+        applicationId = "io.github.HumanBot000.appwrite.hackathon.SnapQuest"
         minSdkVersion 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
@@ -43,8 +43,6 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
     }

@@ -1,6 +1,6 @@
 import 'dart:io' as io;
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/game/live/MediaValidation/Widgets/Buttons.dart';
+import 'package:SnapQuest/game/live/MediaValidation/Widgets/Buttons.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../../../../animations/GradientText.dart';

@@ -1,4 +1,4 @@
-import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
+import 'package:SnapQuest/classes/Challenge.dart';
 import 'package:flutter/material.dart';
 
 class FilmingModeSelector extends StatefulWidget {

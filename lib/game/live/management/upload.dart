@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/enums/appwrite.dart';
+import 'package:SnapQuest/enums/appwrite.dart';
 import '../../../userAuth/auth_service.dart';
 
 final storage = Storage(client);

@@ -5,7 +5,7 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = appwrite_hackathon_2024
+PRODUCT_NAME = SnapQuest
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = io.github.HumanBot000.appwrite.hackathon.appwriteHackathon2024

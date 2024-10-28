@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="appwrite_hackathon_2024"
+        android:label="SnapQuest"
         android:name="${applicationName}"
     android:icon="@mipmap/ic_launcher">
 

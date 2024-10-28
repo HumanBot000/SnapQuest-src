@@ -1,6 +1,6 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite_hackathon_2024/classes/Submission.dart';
-import 'package:appwrite_hackathon_2024/enums/appwrite.dart';
+import 'package:SnapQuest/classes/Submission.dart';
+import 'package:SnapQuest/enums/appwrite.dart';
 
 import '../../../main.dart';
 

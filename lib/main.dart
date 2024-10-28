@@ -1,3 +1,4 @@
+import 'package:SnapQuest/userAuth/auth_service.dart';
 import 'package:SnapQuest/userAuth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "io.github.HumanBot000.appwrite.hackathon" "\0"
-            VALUE "FileDescription", "appwrite_hackathon_2024" "\0"
+            VALUE "FileDescription", "SnapQuest" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "appwrite_hackathon_2024" "\0"
+            VALUE "InternalName", "SnapQuest" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 io.github.HumanBot000.appwrite.hackathon. All rights reserved." "\0"
-            VALUE "OriginalFilename", "appwrite_hackathon_2024.exe" "\0"
-            VALUE "ProductName", "appwrite_hackathon_2024" "\0"
+            VALUE "OriginalFilename", "SnapQuest.exe" "\0"
+            VALUE "ProductName", "SnapQuest" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

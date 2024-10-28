@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/main.dart';
+import 'package:SnapQuest/main.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import '../../../classes/Challenge.dart';

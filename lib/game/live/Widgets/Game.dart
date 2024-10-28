@@ -1,13 +1,14 @@
 import 'package:appwrite/models.dart';
-import 'package:appwrite_hackathon_2024/animations/GradientText.dart';
-import 'package:appwrite_hackathon_2024/classes/Challenge.dart';
-import 'package:appwrite_hackathon_2024/game/live/Widgets/FilmingModeSelector.dart';
-import 'package:appwrite_hackathon_2024/game/live/Widgets/CaptureMedia.dart';
-import 'package:appwrite_hackathon_2024/game/live/Widgets/Timer.dart';
+import 'package:SnapQuest/animations/GradientText.dart';
+import 'package:SnapQuest/classes/Challenge.dart';
+import 'package:SnapQuest/game/live/Widgets/FilmingModeSelector.dart';
+import 'package:SnapQuest/game/live/Widgets/CaptureMedia.dart';
+import 'package:SnapQuest/game/live/Widgets/Timer.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import '../../../enums/gameConfig.dart';
+import '../../../main.dart';
 
 class RunningGame extends StatefulWidget {
   final Challenge activeChallenge;
@@ -62,8 +63,12 @@ class _RunningGameState extends State<RunningGame> {
 
   @override
   void initState() {
+    logger.d("Difficulty ${widget.activeChallenge.difficulty}");
     _timeRemaining =
         challengeTimeLimitsByDifficulty[widget.activeChallenge.difficulty - 1];
+    if (!widget.activeChallenge.photosAllowed) {
+      _setMediaType(false);
+    }
     super.initState();
     _loadCameras();
   }
@@ -122,8 +127,8 @@ class _RunningGameState extends State<RunningGame> {
             user: widget.user,
             roomID: widget.roomID,
           ),
-          const Text(
-              "Take a picture or video of this challenge. You have max. 1 minute time. Whoever finishes first, wins!",
+          Text(
+              "Take a picture or video of this challenge. You have max. ${challengeTimeLimitsByDifficulty[widget.activeChallenge.difficulty - 1].inMinutes} minute${challengeTimeLimitsByDifficulty[widget.activeChallenge.difficulty - 1].inMinutes == 1 ? "" : "s"} time. Whoever finishes first, wins!",
               textAlign: TextAlign.center),
           if (isCameraInitialized)
             Container(

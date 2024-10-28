@@ -1,4 +1,4 @@
-# appwrite_hackathon_2024
+# SnapQuest
 
 Race against friends in SnapQuest, where challenges meet competition! Snap your way to victory by completing real-world photo tasks faster than your friends, whether indoors or outdoors. Each challenge is a race to capture, share, and conquer. Who will complete the quest first? Get ready for an adventure where every snap counts!
 
