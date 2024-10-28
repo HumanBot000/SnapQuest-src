@@ -120,7 +120,7 @@ class _CheckingStackState extends State<CheckingStack> {
             ),
           ),
           child: AppBar(
-            leading: null, //todo removal doesn't work
+            automaticallyImplyLeading: false,
             title: Center(
               child: GradientText(
                 "Do these Assets fulfill the given Challenge?",
