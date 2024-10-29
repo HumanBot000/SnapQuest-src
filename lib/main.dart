@@ -40,20 +40,29 @@ class _MyAppState extends State<MyApp> {
       home: FutureBuilder<bool>(
         future: authService.userIsLoggedIn(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              snapshot.hasError) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
-          }
-          if (snapshot.data == true) {
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text(snapshot.error.toString()),
+              ),
+            );
+          } else if (snapshot.data == true) {
             return FutureBuilder(
               future: authService.getUser(),
               builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting ||
-                    userSnapshot.hasError) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
                   return const Scaffold(
                     body: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (userSnapshot.hasError) {
+                  return Scaffold(
+                    body: Center(
+                      child: Text(userSnapshot.error.toString()),
+                    ),
                   );
                 }
                 if (userSnapshot.hasData) {
