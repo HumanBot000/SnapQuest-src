@@ -40,7 +40,8 @@ class _MyAppState extends State<MyApp> {
       home: FutureBuilder<bool>(
         future: authService.userIsLoggedIn(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.hasError) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
@@ -49,7 +50,8 @@ class _MyAppState extends State<MyApp> {
             return FutureBuilder(
               future: authService.getUser(),
               builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                if (userSnapshot.connectionState == ConnectionState.waiting ||
+                    userSnapshot.hasError) {
                   return const Scaffold(
                     body: Center(child: CircularProgressIndicator()),
                   );
