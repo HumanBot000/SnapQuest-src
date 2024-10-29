@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:SnapQuest/classes/Challenge.dart';
-import 'package:SnapQuest/enums/gameConfig.dart';
 import 'package:SnapQuest/game/live/mediaApproval/management/getMedia.dart';
 import 'package:SnapQuest/util/DBLockup.dart';
 import 'package:flutter/material.dart';
@@ -213,7 +212,7 @@ class _CheckingStackState extends State<CheckingStack> {
                                       ? (_videoController != null &&
                                               _videoController!
                                                   .value.isInitialized)
-                                          ? Container(
+                                          ? SizedBox(
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *

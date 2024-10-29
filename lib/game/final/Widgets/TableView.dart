@@ -1,5 +1,4 @@
 import 'package:appwrite/models.dart';
-import 'package:SnapQuest/enums/gameConfig.dart';
 import 'package:SnapQuest/game/home.dart';
 import 'package:flutter/material.dart';
 import '../management/clean.dart';
@@ -45,7 +44,7 @@ class _ResultsTableState extends State<ResultsTable> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 "${i + 1}.",
-                style: TextStyle(fontSize: 30),
+                style: const TextStyle(fontSize: 30),
               ),
             ),
             i == 0
@@ -88,8 +87,8 @@ class _ResultsTableState extends State<ResultsTable> {
         ),
         Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Icon(Icons.watch_later),
             ),
             Expanded(
@@ -154,20 +153,20 @@ class _ResultsTableState extends State<ResultsTable> {
                       builder: (context) => Home(user: widget.user),
                     ));
               },
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(
+                    Theme.of(context).colorScheme.secondary),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text("Back to Home",
                       style: Theme.of(context).textTheme.titleMedium),
-                  Icon(
+                  const Icon(
                     Icons.door_front_door,
                     color: Colors.red,
                   ),
                 ],
-              ),
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(
-                    Theme.of(context).colorScheme.secondary),
               ))
         ],
       ),

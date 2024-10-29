@@ -5,6 +5,7 @@ class FilmingModeSelector extends StatefulWidget {
   final Challenge activeChallenge;
   final void Function(bool) setMediaType;
   final void Function(bool) toggleMic;
+
   const FilmingModeSelector(
       {super.key,
       required this.activeChallenge,
@@ -18,6 +19,7 @@ class FilmingModeSelector extends StatefulWidget {
 class _FilmingModeSelectorState extends State<FilmingModeSelector> {
   late bool videoIsSelected;
   bool micIsEnabled = true;
+  bool frontCam = true;
 
   void _selectVideo() {
     setState(() {

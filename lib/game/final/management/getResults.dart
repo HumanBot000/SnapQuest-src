@@ -2,18 +2,16 @@ import 'package:appwrite/appwrite.dart';
 import 'package:SnapQuest/classes/Submission.dart';
 import 'package:SnapQuest/enums/appwrite.dart';
 
-import '../../../main.dart';
-
 Future<List<Submission>> getResults(int roomID) async {
   final results = await databases.listDocuments(
       databaseId: appDatabase,
       collectionId: roomMediaCollection,
       queries: [Query.equal("room_id", roomID)]);
   List<Submission> submissions = [];
-  results.documents.forEach((e) {
+  for (var e in results.documents) {
     submissions.add(Submission(e.$id, Uri.parse(e.data['media_url']),
         DateTime.parse(e.$createdAt), roomID));
-  });
+  }
   return await _sortSubmissionsByTime(submissions);
 }
 

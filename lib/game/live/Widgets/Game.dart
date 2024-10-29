@@ -6,6 +6,7 @@ import 'package:SnapQuest/game/live/Widgets/CaptureMedia.dart';
 import 'package:SnapQuest/game/live/Widgets/Timer.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../enums/gameConfig.dart';
 import '../../../main.dart';
@@ -14,12 +15,12 @@ class RunningGame extends StatefulWidget {
   final Challenge activeChallenge;
   final int roomID;
   final User user;
-
-  const RunningGame(
-      {super.key,
-      required this.activeChallenge,
-      required this.roomID,
-      required this.user});
+  const RunningGame({
+    super.key,
+    required this.activeChallenge,
+    required this.roomID,
+    required this.user,
+  });
 
   @override
   State<RunningGame> createState() => _RunningGameState();
@@ -41,6 +42,9 @@ class _RunningGameState extends State<RunningGame> {
             (camera) => camera.lensDirection == CameraLensDirection.back),
         ResolutionPreset.medium);
     await controller.initialize();
+    controller.lockCaptureOrientation(DeviceOrientation.portraitUp);
+    controller.setFocusMode(FocusMode.auto);
+    controller.setFlashMode(FlashMode.off);
     if (mounted) {
       setState(() {
         isCameraInitialized = true;

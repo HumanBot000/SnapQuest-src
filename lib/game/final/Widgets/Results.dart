@@ -4,7 +4,6 @@ import 'package:SnapQuest/game/final/management/getResults.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../classes/Submission.dart';
-import '../../../main.dart';
 import '../../../util/DBLockup.dart';
 import '../../../util/Files.dart';
 
@@ -20,8 +19,8 @@ class Results extends StatefulWidget {
 
 class _ResultsState extends State<Results> {
   List<Submission> submissions = [];
-  Map<int, VideoPlayerController> _videoControllers = {};
-  Map<int, ValueNotifier<bool>> _isVideoPlaying = {};
+  final Map<int, VideoPlayerController> _videoControllers = {};
+  final Map<int, ValueNotifier<bool>> _isVideoPlaying = {};
   bool isLoading = true;
   final ScrollController _scrollController = ScrollController();
   int? _currentActiveIndex;
@@ -149,20 +148,20 @@ class _ResultsState extends State<Results> {
                                 user: widget.user,
                               ),
                             )),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                              Theme.of(context).colorScheme.primary),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text("Continue",
                                 style: Theme.of(context).textTheme.titleMedium),
-                            Icon(
+                            const Icon(
                               Icons.arrow_forward,
                               color: Colors.greenAccent,
                             ),
                           ],
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all(
-                              Theme.of(context).colorScheme.primary),
                         ))
                   ],
                 )
@@ -191,7 +190,7 @@ class _ResultsState extends State<Results> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return Container(
+                                        return const SizedBox(
                                           height: 200,
                                           child: Center(
                                               child:
@@ -254,9 +253,10 @@ class _ResultsState extends State<Results> {
                                           width: double.infinity,
                                           loadingBuilder: (context, child,
                                               loadingProgress) {
-                                            if (loadingProgress == null)
+                                            if (loadingProgress == null) {
                                               return child;
-                                            return Center(
+                                            }
+                                            return const Center(
                                                 child:
                                                     CircularProgressIndicator());
                                           },
@@ -307,18 +307,18 @@ class _ResultsState extends State<Results> {
                                               },
                                             ),
                                             index == 0
-                                                ? Icon(
+                                                ? const Icon(
                                                     Icons.emoji_events,
                                                     color: Color(0xffFFD700),
                                                   )
                                                 : index == 1
-                                                    ? Icon(
+                                                    ? const Icon(
                                                         Icons.emoji_events,
                                                         color:
                                                             Color(0xffC0C0C0),
                                                       )
                                                     : index == 2
-                                                        ? Icon(
+                                                        ? const Icon(
                                                             Icons.emoji_events,
                                                             color: Color(
                                                                 0xffCD7F32),
@@ -329,7 +329,7 @@ class _ResultsState extends State<Results> {
                                       ],
                                     ),
                                   ),
-                                  Divider(),
+                                  const Divider(),
                                 ],
                               ),
                             ),
@@ -345,21 +345,21 @@ class _ResultsState extends State<Results> {
                                   user: widget.user,
                                 ),
                               )),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                                Theme.of(context).colorScheme.primary),
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text("Continue",
                                   style:
                                       Theme.of(context).textTheme.titleMedium),
-                              Icon(
+                              const Icon(
                                 Icons.arrow_forward,
                                 color: Colors.greenAccent,
                               ),
                             ],
-                          ),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(
-                                Theme.of(context).colorScheme.primary),
                           ))
                     ],
                   ),
