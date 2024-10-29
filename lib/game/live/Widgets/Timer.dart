@@ -11,6 +11,7 @@ class CountdownTimer extends StatefulWidget {
   final Duration initialDuration;
   final User user;
   final int roomID;
+
   const CountdownTimer(
       {super.key,
       required this.initialDuration,
@@ -22,7 +23,8 @@ class CountdownTimer extends StatefulWidget {
 }
 
 class _CountdownTimerState extends State<CountdownTimer> {
-  late int _secondsRemaining;
+  int _secondsRemaining =
+      500; //https://dart.dev/effective-dart/usage#avoid-late-variables-if-you-need-to-check-whether-they-are-initialized
   late Timer _timer;
 
   @override
