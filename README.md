@@ -28,5 +28,7 @@ Are you ready to embark on a thrilling journey filled with fun, competition, and
 ### Note for hackathon reviewers:
 - This README was partly created by AI
 - The showcase can be found in my submission repository
+- The code can be found under [/lib](https://github.com/HumanBot000/SnapQuest/tree/master/lib)
+- The format follows the standard conventions for dart and flutter
 - The app isn't enrolled in any Appstores but can be downloaded from the releases section of this repository
 - I added a debug button to the matchmakign to start the game instant. This is helpful for testing, because it eliminates the need to simulate 10 real clients
