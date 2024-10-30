@@ -63,7 +63,13 @@ class AuthService {
   }
 
   Future<models.User?> getUser() async {
-    return await account.get();
+    try{
+        models.user? user = await account.get();
+    }
+    on AppwriteException{
+      return null;
+    }
+    return user;
   }
 
   Future<void> logout() async {
