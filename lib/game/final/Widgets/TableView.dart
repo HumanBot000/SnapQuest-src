@@ -147,6 +147,7 @@ class _ResultsTableState extends State<ResultsTable> {
           ElevatedButton(
               onPressed: () {
                 scheduleRoomForDeletion(widget.roomID);
+                deleteRoomChallenge(widget.roomID);
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

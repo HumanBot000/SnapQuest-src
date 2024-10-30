@@ -42,6 +42,23 @@ Future<void> scheduleRoomForDeletion(int roomID) async {
   }
 }
 
+Future<void> deleteRoomChallenge(int roomID) async {
+  final roomChallengeData = await databases.listDocuments(
+      databaseId: appDatabase,
+      collectionId: roomChallengesCollection,
+      queries: [Query.equal("room_id", roomID)]);
+  for (var data in roomChallengeData.documents) {
+    try {
+      await databases.deleteDocument(
+          databaseId: appDatabase,
+          collectionId: roomChallengesCollection,
+          documentId: data.$id);
+    } catch (e) {
+      logger.v(e);
+    }
+  }
+}
+
 Future<void> deleteGameData(int roomID) async {
   //This function might get a bit long, but it's Single Responsibility and these processes probably ever won't run on themselves
   final reportedAssets = await databases.listDocuments(
