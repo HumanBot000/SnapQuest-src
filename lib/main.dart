@@ -46,6 +46,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else if (snapshot.hasError) {
             return Scaffold(
+              appBar: AppBar(title: const Text('Error1')),
               body: Center(
                 child: Text(snapshot.error.toString()),
               ),

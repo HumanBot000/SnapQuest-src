@@ -63,13 +63,13 @@ class AuthService {
   }
 
   Future<models.User?> getUser() async {
-    try{
-        models.user? user = await account.get();
-    }
-    on AppwriteException{
+    try {
+      models.User? user = await account.get();
+      return user;
+    } on AppwriteException {
+      //This gets thrown when the user is not logged in (Appwrite doesn't provide another way to check this)
       return null;
     }
-    return user;
   }
 
   Future<void> logout() async {
