@@ -1,7 +1,7 @@
 name: SnapQuest
 description: "Race against friends in SnapQuest, where challenges meet competition! Snap your way to victory by completing real-world photo tasks faster than your friends, whether indoors or outdoors. Each challenge is a race to capture, share, and conquer. Who will complete the quest first? Get ready for an adventure where every snap counts!"
 publish_to: 'none'
-version: 1.0.0
+version: 1.1.0
 environment:
   sdk: '>=3.4.0 <4.0.0'
 dependencies:
@@ -19,6 +19,13 @@ dependencies:
   swipable_stack: ^2.0.0
   http: ^0.13.5
   intl: ^0.17.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/appIcon.jpg"
+  min_sdk_android: 21
 dev_dependencies:
   flutter_test:
     sdk: flutter
