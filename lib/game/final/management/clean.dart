@@ -38,7 +38,7 @@ Future<void> scheduleRoomForDeletion(int roomID) async {
         databaseId: appDatabase,
         collectionId: matchmakingCollection,
         documentId: data.$id,
-        data: {'is_finished': true, "finished_at": DateTime.now().toString()});
+        data: {'is_finished': true, "finished_at": DateTime.now()});
   }
 }
 
