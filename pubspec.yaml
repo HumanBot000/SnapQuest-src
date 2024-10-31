@@ -19,6 +19,24 @@ dependencies:
   swipable_stack: ^2.0.0
   http: ^0.13.5
   intl: ^0.17.0
+  flutter_launcher_icons: ^0.13.1
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/android/res/mipmap-hdpi/ic_launcher.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icons/web/icon-192.png"
+    background_color: "#00C853FF"
+    theme_color: "#00C853FF"
+  windows:
+    generate: true
+    image_path: "assets/icons/web/icon-192.png"
+    icon_size: 192 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/web/icon-192.png"
 dev_dependencies:
   flutter_test:
     sdk: flutter
